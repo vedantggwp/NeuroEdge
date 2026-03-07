@@ -89,6 +89,7 @@ export const S08_Team: React.FC = () => {
               name="Vedant Gaikwad"
               role="Co-founder — Technical"
               bio="MSc Computer Science, University of Liverpool. Former agency co-founder. Scored 92/100 on Accenture's AI consulting programme. Builds the scanning engine, AI pipeline, and product."
+              imageSrc="vedant.jpeg"
               delay={90}
               tags={[
                 "Product Engineering",
