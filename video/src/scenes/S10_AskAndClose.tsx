@@ -145,7 +145,7 @@ export const S10_AskAndClose: React.FC = () => {
                 ...foundersAnim,
               }}
             >
-              Shashwati Bhosale &amp; Vedant Gaikwad
+              Shashwati Bhosale & Vedant Gaikwad
             </div>
 
             <div
@@ -156,7 +156,7 @@ export const S10_AskAndClose: React.FC = () => {
                 ...institutionAnim,
               }}
             >
-              University of Liverpool &middot; Design Your Future 2026
+              University of Liverpool · Design Your Future 2026
             </div>
           </div>
         </AbsoluteFill>

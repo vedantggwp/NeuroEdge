@@ -142,6 +142,7 @@ export const S09_RoadmapAndFunds: React.FC = () => {
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
+            alignItems: "center",
             gap: 24,
             opacity: phase1Opacity,
           }}
@@ -156,25 +157,29 @@ export const S09_RoadmapAndFunds: React.FC = () => {
               letterSpacing: 4,
               opacity: labelProgress,
               transform: `translateY(${(1 - labelProgress) * 15}px)`,
+              alignSelf: "flex-start",
             }}
           >
             USE OF FUNDS
           </span>
 
           {/* Headline */}
-          <AnimatedText
-            text={"£5,000 — every pound accounted for"}
-            fontSize={42}
-            fontFamily={fonts.heading}
-            delay={10}
-          />
+          <div style={{ alignSelf: "flex-start" }}>
+            <AnimatedText
+              text={"£5,000 — every pound accounted for"}
+              fontSize={42}
+              fontFamily={fonts.heading}
+              delay={10}
+            />
+          </div>
 
           {/* Budget list */}
           <div
             style={{
               display: "flex",
               flexDirection: "column",
-              maxWidth: 700,
+              width: "100%",
+              maxWidth: 900,
               marginTop: 16,
             }}
           >

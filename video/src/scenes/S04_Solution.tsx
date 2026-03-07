@@ -139,6 +139,7 @@ export const S04_Solution: React.FC = () => {
             padding: "64px 100px",
             display: "flex",
             flexDirection: "column",
+            justifyContent: "center",
           }}
         >
           {/* Section label */}

@@ -35,6 +35,7 @@ export const S08_Team: React.FC = () => {
             padding: "64px 100px",
             display: "flex",
             flexDirection: "column",
+            justifyContent: "center",
           }}
         >
           {/* Section label */}
@@ -66,9 +67,9 @@ export const S08_Team: React.FC = () => {
           <div
             style={{
               display: "flex",
-              flexDirection: "column",
-              gap: 24,
-              maxWidth: 900,
+              flexDirection: "row",
+              gap: 40,
+              width: "100%",
             }}
           >
             <TeamMember

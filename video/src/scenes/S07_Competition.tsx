@@ -88,7 +88,7 @@ export const S07_Competition: React.FC = () => {
           />
 
           {/* Bar chart */}
-          <div style={{ maxWidth: 800, marginTop: 8 }}>
+          <div style={{ width: "100%", marginTop: 8 }}>
             <BarChart items={[...CHART_ITEMS]} delay={30} />
           </div>
 
