@@ -1,0 +1,22 @@
+{
+  "name": "neuroedge-video",
+  "version": "1.0.0",
+  "description": "NeuroEdge pitch video built with Remotion",
+  "scripts": {
+    "start": "npx remotion studio",
+    "build": "npx remotion render NeuroEdgePitch",
+    "preview": "npx remotion preview"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.434",
+    "@remotion/google-fonts": "^4.0.434",
+    "@remotion/paths": "^4.0.434",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "remotion": "4.0.434"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "typescript": "^5.7.0"
+  }
+}
