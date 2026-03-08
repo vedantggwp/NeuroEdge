@@ -14,31 +14,31 @@ import { S10_AskAndClose } from "./scenes/S10_AskAndClose";
 export const Video: React.FC = () => {
   return (
     <Series>
-      <Series.Sequence durationInFrames={600}>
+      <Series.Sequence durationInFrames={750}>
         <S01_ColdOpen />
       </Series.Sequence>
       <Series.Sequence durationInFrames={600}>
         <S02_ProblemStats />
       </Series.Sequence>
-      <Series.Sequence durationInFrames={750}>
+      <Series.Sequence durationInFrames={600}>
         <S03_MarketAndLaw />
       </Series.Sequence>
       <Series.Sequence durationInFrames={750}>
         <S04_Solution />
       </Series.Sequence>
-      <Series.Sequence durationInFrames={600}>
+      <Series.Sequence durationInFrames={450}>
         <S05_HowItWorks />
       </Series.Sequence>
-      <Series.Sequence durationInFrames={750}>
+      <Series.Sequence durationInFrames={600}>
         <S06_CustomerAndPricing />
       </Series.Sequence>
       <Series.Sequence durationInFrames={450}>
         <S07_Competition />
       </Series.Sequence>
-      <Series.Sequence durationInFrames={600}>
+      <Series.Sequence durationInFrames={450}>
         <S08_Team />
       </Series.Sequence>
-      <Series.Sequence durationInFrames={750}>
+      <Series.Sequence durationInFrames={600}>
         <S09_RoadmapAndFunds />
       </Series.Sequence>
       <Series.Sequence durationInFrames={600}>

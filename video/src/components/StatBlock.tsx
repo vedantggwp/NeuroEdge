@@ -34,11 +34,11 @@ export const StatBlock: React.FC<StatBlockProps> = ({
       ...anim,
     }}>
       <CountUp value={value} prefix={prefix} suffix={suffix} delay={delay + 6} decimals={decimals} color={color} />
-      <div style={{ fontSize: 15, color: colors.text.secondary, lineHeight: 1.5, marginTop: 8, fontFamily: fonts.body }}>
+      <div style={{ fontSize: 20, color: colors.text.secondary, lineHeight: 1.5, marginTop: 8, fontFamily: fonts.body }}>
         {label}
       </div>
       {source && (
-        <div style={{ fontSize: 12, color: colors.text.muted, marginTop: 8, fontFamily: fonts.mono }}>
+        <div style={{ fontSize: 16, color: colors.text.muted, marginTop: 8, fontFamily: fonts.mono }}>
           {source}
         </div>
       )}

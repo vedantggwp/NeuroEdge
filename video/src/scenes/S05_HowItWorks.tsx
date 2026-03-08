@@ -1,16 +1,18 @@
 import React from "react";
-import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring } from "remotion";
+import { AbsoluteFill, useCurrentFrame, useVideoConfig } from "remotion";
 import { AnimatedText } from "../components/AnimatedText";
 import { FlowStep } from "../components/FlowStep";
 import { GradientBackground } from "../components/GradientBackground";
 import { FloatingOrbs } from "../components/FloatingOrbs";
 import { NoiseOverlay } from "../components/NoiseOverlay";
 import { SceneTransition } from "../components/SceneTransition";
+import { Subtitle } from "../components/Subtitle";
 import { colors } from "../lib/theme";
+import { SUBTITLES_S05 } from "../lib/subtitles";
 import { fonts } from "../lib/fonts";
-import { fadeInUp, SPRING_CONFIG } from "../lib/animations";
+import { fadeInUp } from "../lib/animations";
 
-const DURATION = 600;
+const DURATION = 450;
 
 interface StepConfig {
   readonly stepNum: string;
@@ -74,12 +76,6 @@ export const S05_HowItWorks: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  const labelProgress = spring({
-    frame,
-    fps,
-    config: SPRING_CONFIG,
-  });
-
   const bottomTextAnim = fadeInUp(frame, fps, 180);
 
   return (
@@ -91,28 +87,13 @@ export const S05_HowItWorks: React.FC = () => {
       <SceneTransition durationInFrames={DURATION}>
         <AbsoluteFill
           style={{
-            padding: "64px 100px",
+            padding: "48px 100px 110px",
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
             gap: 32,
           }}
         >
-          {/* Section label */}
-          <span
-            style={{
-              fontFamily: fonts.mono,
-              fontSize: 14,
-              color: colors.accent,
-              textTransform: "uppercase" as const,
-              letterSpacing: 4,
-              opacity: labelProgress,
-              transform: `translateY(${(1 - labelProgress) * 15}px)`,
-            }}
-          >
-            HOW IT WORKS
-          </span>
-
           {/* Headline */}
           <AnimatedText
             text="URL in. Report out. Five steps."
@@ -147,7 +128,7 @@ export const S05_HowItWorks: React.FC = () => {
           {/* Bottom text */}
           <p
             style={{
-              fontSize: 16,
+              fontSize: 22,
               color: colors.text.secondary,
               fontFamily: fonts.body,
               lineHeight: 1.5,
@@ -155,11 +136,11 @@ export const S05_HowItWorks: React.FC = () => {
               ...bottomTextAnim,
             }}
           >
-            Free tier shows the score + top 3 issues. Paid tier delivers the
-            full PDF report.
+            Free tier shows the score + top 3 issues on screen. Paid tier (from £29) delivers the full PDF report. Monitoring agent (£19/month) repeats this scan weekly and alerts on new issues.
           </p>
         </AbsoluteFill>
       </SceneTransition>
+      <Subtitle entries={SUBTITLES_S05} />
     </AbsoluteFill>
   );
 };

@@ -21,35 +21,35 @@ export const TeamMember: React.FC<TeamMemberProps> = ({
   const anim = fadeInUp(frame, fps, delay);
 
   return (
-    <div style={{ display: "flex", gap: 24, padding: 24, background: colors.bg.card, borderRadius: 12, ...anim }}>
+    <div style={{ display: "flex", gap: 24, padding: 28, background: colors.bg.card, borderRadius: 12, ...anim }}>
       {imageSrc ? (
         <Img
           src={staticFile(imageSrc)}
           style={{
-            width: 80, height: 80, borderRadius: "50%", objectFit: "cover",
+            width: 100, height: 100, borderRadius: "50%", objectFit: "cover",
             border: `2px solid ${colors.accent}40`, flexShrink: 0,
           }}
         />
       ) : (
         <div style={{
-          width: 80, height: 80, borderRadius: "50%", flexShrink: 0,
+          width: 100, height: 100, borderRadius: "50%", flexShrink: 0,
           background: `linear-gradient(135deg, ${colors.accentDim}, ${colors.accent})`,
           display: "flex", alignItems: "center", justifyContent: "center",
-          fontSize: 28, fontWeight: 700, color: "white",
+          fontSize: 36, fontWeight: 700, color: "white",
         }}>
           {name.charAt(0)}
         </div>
       )}
-      <div>
-        <h4 style={{ fontSize: 20, fontWeight: 700, color: colors.text.primary, fontFamily: fonts.body, marginBottom: 2 }}>{name}</h4>
-        <div style={{ fontSize: 14, color: colors.accent, marginBottom: 10, fontFamily: fonts.body }}>{role}</div>
-        <p style={{ fontSize: 14, lineHeight: 1.5, color: colors.text.secondary, fontFamily: fonts.body }}>{bio}</p>
+      <div style={{ flex: 1 }}>
+        <h4 style={{ fontSize: 24, fontWeight: 700, color: colors.text.primary, fontFamily: fonts.body, marginBottom: 4 }}>{name}</h4>
+        <div style={{ fontSize: 18, color: colors.accent, marginBottom: 10, fontFamily: fonts.body }}>{role}</div>
+        <p style={{ fontSize: 17, lineHeight: 1.5, color: colors.text.secondary, fontFamily: fonts.body }}>{bio}</p>
         {tags.length > 0 && (
-          <div style={{ display: "flex", gap: 6, marginTop: 10, flexWrap: "wrap" as const }}>
+          <div style={{ display: "flex", gap: 8, marginTop: 12, flexWrap: "wrap" as const }}>
             {tags.map((tag, i) => (
               <span key={i} style={{
                 background: `${colors.accent}20`, color: colors.accent,
-                padding: "3px 10px", borderRadius: 16, fontSize: 12, fontFamily: fonts.mono,
+                padding: "4px 12px", borderRadius: 16, fontSize: 15, fontFamily: fonts.mono,
               }}>{tag}</span>
             ))}
           </div>

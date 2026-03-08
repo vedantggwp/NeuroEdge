@@ -295,7 +295,7 @@ The video must practice what NeuroEdge preaches:
 **Transition out:** Blur-dissolve (into the emotional close)
 
 **Script:**
-> "We're asking for 5,000 pounds. 500 for user research with disabled testers. 1,000 for marketing. 400 for AI infrastructure. The rest for design, legal, and workshops. April: build the MVP. May: pilot with 20 Liverpool SMEs. By September — 100 customers and 22,800 pounds in annual revenue."
+> "We're asking for 5,000 pounds. 500 for user research with disabled testers. 1,000 for marketing. 400 for AI infrastructure. The rest for design, legal, and workshops. April: build the MVP. May: pilot with 20 Liverpool SMEs. By September — 100 customers, 30 monitoring subscribers, and over 5,000 pounds recovered. At 100 subscribers, that's 22,800 pounds ARR."
 
 **Visual sequence:**
 - Phase 1 (frames 0-280): Budget table animates row by row. Total row lands with emphasis.

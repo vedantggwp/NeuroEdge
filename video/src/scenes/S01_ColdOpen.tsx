@@ -1,135 +1,126 @@
 import React from "react";
 import { AbsoluteFill, useCurrentFrame, interpolate } from "remotion";
-import { AnimatedText } from "../components/AnimatedText";
-import { TextHighlight } from "../components/TextHighlight";
+import { CinematicText } from "../components/CinematicText";
+import { SarahCharacter } from "../components/SarahCharacter";
+import { BrowserMockup } from "../components/BrowserMockup";
+import { FloristWebsite } from "../components/FloristWebsite";
+import { ScreenReaderCursor } from "../components/ScreenReaderCursor";
 import { GradientBackground } from "../components/GradientBackground";
 import { FloatingOrbs } from "../components/FloatingOrbs";
 import { NoiseOverlay } from "../components/NoiseOverlay";
 import { SceneTransition } from "../components/SceneTransition";
+import { Subtitle } from "../components/Subtitle";
 import { colors } from "../lib/theme";
-import { fonts } from "../lib/fonts";
+import { SUBTITLES_S01 } from "../lib/subtitles";
 
-const DURATION = 600;
+const DURATION = 750;
 
-const bodyStyle: React.CSSProperties = {
-  justifyContent: "center",
-  textAlign: "center",
-};
+const CURSOR_STEPS = [
+  { x: 36, y: 58, width: 120, height: 28, delay: 140, duration: 30 },
+  { x: 200, y: 58, width: 200, height: 28, delay: 170, duration: 30 },
+  { x: 36, y: 120, width: 160, height: 170, delay: 200, duration: 35 },
+  { x: 220, y: 120, width: 160, height: 170, delay: 235, duration: 35 },
+  { x: 400, y: 120, width: 160, height: 170, delay: 270, duration: 35 },
+  { x: 180, y: 340, width: 240, height: 46, delay: 320, duration: 120 },
+] as const;
 
 export const S01_ColdOpen: React.FC = () => {
   const frame = useCurrentFrame();
 
-  const contentOpacity = interpolate(frame, [0, 14, 15, 30], [0, 0, 0, 1], {
+  const introOpacity = interpolate(frame, [0, 20], [0, 1], {
     extrapolateRight: "clamp",
-    extrapolateLeft: "clamp",
   });
 
-  const shakeX =
-    frame >= 280 && frame <= 310
-      ? interpolate(frame, [280, 285, 290, 295, 300, 305, 310], [0, 3, -3, 3, -3, 2, 0])
-      : 0;
+  const introFadeOut = interpolate(frame, [110, 130], [1, 0], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+  });
+
+  const websiteOpacity = interpolate(frame, [130, 155], [0, 1], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+  });
+
+  const tabCloseOpacity = interpolate(frame, [460, 520], [1, 0], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+  });
+
+  const screenDim = interpolate(frame, [520, 580], [0, 0.7], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+  });
 
   return (
     <AbsoluteFill style={{ backgroundColor: colors.bg.dark }}>
-      <div style={{ opacity: contentOpacity, width: "100%", height: "100%" }}>
-        <GradientBackground />
-        <FloatingOrbs />
-        <NoiseOverlay />
+      <GradientBackground />
+      <FloatingOrbs />
+      <NoiseOverlay />
 
-        <SceneTransition durationInFrames={DURATION}>
-          <AbsoluteFill
+      <SceneTransition durationInFrames={DURATION} variant="blur-dissolve" transitionFrames={30}>
+        {/* Phase 1: Sarah character + CinematicText intro (frames 0-130) */}
+        <AbsoluteFill
+          style={{
+            justifyContent: "center",
+            alignItems: "center",
+            opacity: introOpacity * introFadeOut,
+          }}
+        >
+          <div
             style={{
-              justifyContent: "center",
+              display: "flex",
+              flexDirection: "column",
               alignItems: "center",
+              gap: 24,
             }}
           >
-            <div
-              style={{
-                maxWidth: 800,
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                gap: 28,
-                padding: "0 40px",
-              }}
+            <SarahCharacter size={240} delay={5} />
+            <CinematicText
+              lines={[
+                "This is Sarah.",
+                "She's 34. She lives in Liverpool.",
+                "She's partially sighted.",
+              ]}
+              startDelay={15}
+              delayBetweenLines={30}
+              fontSize={44}
+            />
+          </div>
+        </AbsoluteFill>
+
+        {/* Phase 2: FloristWebsite + ScreenReaderCursor (frames 130-460) */}
+        <AbsoluteFill
+          style={{
+            justifyContent: "center",
+            alignItems: "center",
+            opacity: websiteOpacity * tabCloseOpacity,
+          }}
+        >
+          <div style={{ position: "relative", width: 650, height: 440 }}>
+            <BrowserMockup
+              url="www.bloomandpetal.co.uk"
+              delay={130}
+              variant="light"
             >
-              <AnimatedText
-                text="Imagine you run a small business."
-                delay={20}
-                fontSize={36}
-                color={colors.text.secondary}
-                fontFamily={fonts.body}
-                style={bodyStyle}
-              />
+              <FloristWebsite showCheckout />
+            </BrowserMockup>
 
-              <AnimatedText
-                text="You've got a website."
-                delay={70}
-                fontSize={36}
-                color={colors.text.secondary}
-                fontFamily={fonts.body}
-                style={bodyStyle}
-              />
+            <ScreenReaderCursor
+              steps={[...CURSOR_STEPS]}
+              failAtIndex={5}
+            />
+          </div>
+        </AbsoluteFill>
 
-              <AnimatedText
-                text="Customers visit every day."
-                delay={120}
-                fontSize={36}
-                color={colors.text.secondary}
-                fontFamily={fonts.body}
-                style={bodyStyle}
-              />
-
-              <AnimatedText
-                text="But what you don't know..."
-                delay={200}
-                fontSize={30}
-                color={colors.text.muted}
-                fontFamily={fonts.body}
-                style={{ ...bodyStyle, marginTop: 16 }}
-              />
-
-              <div
-                style={{
-                  transform: `translateX(${shakeX}px)`,
-                  marginTop: 12,
-                  display: "flex",
-                  justifyContent: "center",
-                }}
-              >
-                <AnimatedText
-                  text="is that"
-                  delay={270}
-                  fontSize={52}
-                  color={colors.warning}
-                  fontFamily={fonts.heading}
-                  style={bodyStyle}
-                />
-                <span style={{ width: "0.3em" }} />
-                <TextHighlight delay={290} color={colors.warning}>
-                  <AnimatedText
-                    text="one in four"
-                    delay={270}
-                    fontSize={52}
-                    color={colors.warning}
-                    fontFamily={fonts.heading}
-                    style={bodyStyle}
-                  />
-                </TextHighlight>
-                <span style={{ width: "0.3em" }} />
-                <AnimatedText
-                  text="of them can't actually use it."
-                  delay={270}
-                  fontSize={52}
-                  color={colors.warning}
-                  fontFamily={fonts.heading}
-                  style={bodyStyle}
-                />
-              </div>
-            </div>
-          </AbsoluteFill>
-        </SceneTransition>
-      </div>
+        {/* Phase 3: Screen dims after tab closes (frames 520-750) */}
+        <AbsoluteFill
+          style={{
+            backgroundColor: colors.bg.dark,
+            opacity: screenDim,
+          }}
+        />
+      </SceneTransition>
+      <Subtitle entries={SUBTITLES_S01} />
     </AbsoluteFill>
   );
 };

@@ -1,28 +1,19 @@
 import React from "react";
-import { AbsoluteFill, useCurrentFrame, useVideoConfig, interpolate } from "remotion";
+import { AbsoluteFill } from "remotion";
 import { AnimatedText } from "../components/AnimatedText";
 import { TeamMember } from "../components/TeamMember";
 import { GradientBackground } from "../components/GradientBackground";
 import { FloatingOrbs } from "../components/FloatingOrbs";
 import { NoiseOverlay } from "../components/NoiseOverlay";
 import { SceneTransition } from "../components/SceneTransition";
+import { Subtitle } from "../components/Subtitle";
 import { colors } from "../lib/theme";
 import { fonts } from "../lib/fonts";
-import { SPRING_CONFIG } from "../lib/animations";
-import { spring } from "remotion";
+import { SUBTITLES_S08 } from "../lib/subtitles";
 
-const DURATION = 600;
+const DURATION = 450;
 
 export const S08_Team: React.FC = () => {
-  const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
-
-  const labelProgress = spring({
-    frame,
-    fps,
-    config: SPRING_CONFIG,
-  });
-
   return (
     <AbsoluteFill style={{ backgroundColor: colors.bg.dark }}>
       <GradientBackground />
@@ -32,28 +23,12 @@ export const S08_Team: React.FC = () => {
       <SceneTransition durationInFrames={DURATION}>
         <AbsoluteFill
           style={{
-            padding: "64px 100px",
+            padding: "48px 100px 110px",
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
           }}
         >
-          {/* Section label */}
-          <div
-            style={{
-              fontSize: 14,
-              fontFamily: fonts.mono,
-              color: colors.accent,
-              letterSpacing: 4,
-              textTransform: "uppercase",
-              opacity: labelProgress,
-              transform: `translateY(${interpolate(labelProgress, [0, 1], [15, 0])}px)`,
-              marginBottom: 16,
-            }}
-          >
-            THE TEAM
-          </div>
-
           {/* Headline */}
           <AnimatedText
             text="Conversion expertise + rapid technical execution"
@@ -75,7 +50,7 @@ export const S08_Team: React.FC = () => {
             <TeamMember
               name="Shashwati Bhosale"
               role="Lead Founder — Strategy & Methodology"
-              bio="MSc Advanced Marketing, University of Liverpool. Background in ad optimisation, conversion testing, and disability-inclusive marketing. Designs the scoring methodology, report framework, and plain-English fix recommendations."
+              bio="MSc Advanced Marketing, University of Liverpool. Professional background in ad optimisation, conversion testing, and web page UX. Research focus on disability-inclusive marketing and experiential marketing. Designs the scoring methodology, report framework, and plain-English fix recommendations. Leads client relationships and outreach."
               imageSrc="shashwati.jpeg"
               delay={30}
               tags={[
@@ -88,7 +63,7 @@ export const S08_Team: React.FC = () => {
             <TeamMember
               name="Vedant Gaikwad"
               role="Co-founder — Technical"
-              bio="MSc Computer Science, University of Liverpool. Former agency co-founder. Scored 92/100 on Accenture's AI consulting programme. Builds the scanning engine, AI pipeline, and product."
+              bio="MSc Computer Science, University of Liverpool. Former business strategist and digital marketing agency co-founder. Scored 92/100 on Accenture's AI consulting programme. Built a functional product (Discovery Simulator) in 12 hours. Builds the web application, scanning engine integration, AI interpretation pipeline, and PDF report generation."
               imageSrc="vedant.jpeg"
               delay={90}
               tags={[
@@ -100,6 +75,7 @@ export const S08_Team: React.FC = () => {
           </div>
         </AbsoluteFill>
       </SceneTransition>
+      <Subtitle entries={SUBTITLES_S08} />
     </AbsoluteFill>
   );
 };

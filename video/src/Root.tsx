@@ -2,7 +2,7 @@ import { Composition } from "remotion";
 import { Video } from "./Video";
 
 const FPS = 30;
-const DURATION_SECONDS = 215;
+const DURATION_SECONDS = 195;
 
 export const RemotionRoot: React.FC = () => {
   return (

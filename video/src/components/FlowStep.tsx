@@ -33,12 +33,12 @@ export const FlowStep: React.FC<FlowStepProps> = ({
         transform: `translateY(${(1 - progress) * 20}px)`,
         boxShadow: isActive ? `0 0 30px ${colors.accent}40` : "none",
       }}>
-        <span style={{ fontFamily: fonts.mono, fontSize: 11, fontWeight: 700, color: colors.accent, marginBottom: 10, display: "block" }}>{stepNum}</span>
-        <h4 style={{ fontSize: 15, fontWeight: 700, color: colors.text.primary, marginBottom: 8, fontFamily: fonts.body }}>{title}</h4>
-        <p style={{ fontSize: 13, lineHeight: 1.45, color: colors.text.secondary, fontFamily: fonts.body }}>{description}</p>
+        <span style={{ fontFamily: fonts.mono, fontSize: 16, fontWeight: 700, color: colors.accent, marginBottom: 10, display: "block" }}>{stepNum}</span>
+        <h4 style={{ fontSize: 19, fontWeight: 700, color: colors.text.primary, marginBottom: 8, fontFamily: fonts.body }}>{title}</h4>
+        <p style={{ fontSize: 16, lineHeight: 1.45, color: colors.text.secondary, fontFamily: fonts.body }}>{description}</p>
       </div>
       {showArrow && (
-        <div style={{ display: "flex", alignItems: "center", color: colors.accent, fontSize: 20, opacity: progress }}>→</div>
+        <div style={{ display: "flex", alignItems: "center", color: colors.accent, fontSize: 24, opacity: progress }}>→</div>
       )}
     </div>
   );

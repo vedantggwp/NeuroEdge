@@ -16,6 +16,17 @@ export const colors = {
   },
 } as const;
 
+export const fontSize = {
+  hero: 72,
+  h1: 48,
+  h2: 36,
+  h3: 24,
+  body: 22,
+  bodySmall: 20,
+  caption: 18,
+  tag: 16,
+} as const;
+
 export const spacing = {
   page: { x: 100, y: 64 },
   gap: {

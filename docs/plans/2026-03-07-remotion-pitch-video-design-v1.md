@@ -242,7 +242,7 @@ NeuroEdge/video/
 **Speaker:** Shashwati
 
 **Script:**
-> "We're asking for 5,000 pounds — and every pound is accounted for. 500 goes to user research with disabled testers. 1,000 to marketing and outreach. 400 to AI infrastructure. The rest covers design, legal setup, workshops, and founder stipends. Our 6-month roadmap: April we build the MVP. May we pilot with 20 Liverpool SMEs. June we launch publicly. By September — 100 paying customers, 30 monitoring subscribers, and 22,800 pounds in annual recurring revenue."
+> "We're asking for 5,000 pounds — and every pound is accounted for. 500 goes to user research with disabled testers. 1,000 to marketing and outreach. 400 to AI infrastructure. The rest covers design, legal setup, workshops, and founder stipends. Our 6-month roadmap: April we build the MVP. May we pilot with 20 Liverpool SMEs. June we launch publicly. By September — 100 paying customers, 30 monitoring subscribers, and 6,840 pounds in monitoring ARR. Over 5,000 pounds recovered within 6 months."
 
 **Visuals:**
 - Budget table animates row-by-row, amounts counter up

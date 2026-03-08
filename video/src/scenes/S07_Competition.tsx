@@ -1,14 +1,16 @@
 import React from "react";
-import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring } from "remotion";
+import { AbsoluteFill, useCurrentFrame, useVideoConfig } from "remotion";
 import { AnimatedText } from "../components/AnimatedText";
 import { BarChart } from "../components/BarChart";
 import { GradientBackground } from "../components/GradientBackground";
 import { FloatingOrbs } from "../components/FloatingOrbs";
 import { NoiseOverlay } from "../components/NoiseOverlay";
 import { SceneTransition } from "../components/SceneTransition";
+import { Subtitle } from "../components/Subtitle";
 import { colors } from "../lib/theme";
 import { fonts } from "../lib/fonts";
-import { fadeInUp, SPRING_CONFIG } from "../lib/animations";
+import { fadeInUp } from "../lib/animations";
+import { SUBTITLES_S07 } from "../lib/subtitles";
 
 const DURATION = 450;
 
@@ -40,12 +42,6 @@ export const S07_Competition: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  const labelProgress = spring({
-    frame,
-    fps,
-    config: SPRING_CONFIG,
-  });
-
   const closingAnim = fadeInUp(frame, fps, 60);
 
   return (
@@ -57,28 +53,14 @@ export const S07_Competition: React.FC = () => {
       <SceneTransition durationInFrames={DURATION}>
         <AbsoluteFill
           style={{
-            padding: "64px 100px",
+            padding: "48px 100px 110px",
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
-            gap: 28,
+            alignItems: "center",
+            gap: 32,
           }}
         >
-          {/* Section label */}
-          <span
-            style={{
-              fontFamily: fonts.mono,
-              fontSize: 14,
-              color: colors.accent,
-              textTransform: "uppercase" as const,
-              letterSpacing: 4,
-              opacity: labelProgress,
-              transform: `translateY(${(1 - labelProgress) * 15}px)`,
-            }}
-          >
-            COMPETITIVE POSITIONING
-          </span>
-
           {/* Headline */}
           <AnimatedText
             text="We're not competing with enterprise tools. We're filling the gap below them."
@@ -95,19 +77,21 @@ export const S07_Competition: React.FC = () => {
           {/* Closing line */}
           <p
             style={{
-              fontSize: 16,
+              fontSize: 22,
               color: colors.text.secondary,
               fontFamily: fonts.body,
               lineHeight: 1.5,
               marginTop: 8,
+              textAlign: "center",
+              maxWidth: 900,
               ...closingAnim,
             }}
           >
-            Overlay tools don't fix root causes. We take the honest approach:
-            audit and explain.
+            Accessibility overlay tools (accessiBe, UserWay) are widely criticised by the disability community for not actually fixing underlying issues. We take the honest approach: audit and explain, not mask.
           </p>
         </AbsoluteFill>
       </SceneTransition>
+      <Subtitle entries={SUBTITLES_S07} />
     </AbsoluteFill>
   );
 };

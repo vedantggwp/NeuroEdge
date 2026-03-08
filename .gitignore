@@ -1,0 +1,22 @@
+# Everything ignored by default
+*
+
+# Allow PitchDeck
+!PitchDeck/
+!PitchDeck/**
+
+# Allow video project
+!video/
+!video/**
+
+# Allow docs
+!docs/
+!docs/**
+
+# Allow git infrastructure
+!.gitignore
+
+# Ignore build artifacts inside video
+video/out/
+video/node_modules/
+video/.cache/
