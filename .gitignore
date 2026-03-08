@@ -13,6 +13,10 @@
 !docs/
 !docs/**
 
+# Allow brand kit
+!brand/
+!brand/**
+
 # Allow git infrastructure
 !.gitignore
 
