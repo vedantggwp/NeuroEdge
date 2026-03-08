@@ -24,7 +24,7 @@ Each step is sequential. User must approve output before next step begins.
   - Elevator pitch (~75 words)
   - Quick positioning test (5 checks)
   - Self-critique pass
-- **Status:** NOT STARTED
+- **Status:** DONE — committed `02f8ca8`
 
 ## Step 2: Brand Voice
 - **Skill:** market-brand
@@ -40,7 +40,7 @@ Each step is sequential. User must approve output before next step begins.
   - Brand messaging hierarchy (tagline, value props, elevator pitch, boilerplate)
   - 8 copy samples in brand voice
   - Competitor voice comparison
-- **Status:** NOT STARTED
+- **Status:** DONE — 2026-03-08. Output: `brand/BRAND-VOICE.md`
 
 ## Step 3: Copywriting
 - **Skill:** copywriting
@@ -83,4 +83,5 @@ Each step is sequential. User must approve output before next step begins.
 5. Source of truth is ALWAYS `PitchDeck/index.html`
 
 ## Log
-(Entries added after each step completion)
+- **Step 1 (Positioning):** DONE — 2026-03-08, commit `02f8ca8`. Output: `brand/POSITIONING.md`. User approved.
+- **Step 2 (Brand Voice):** DONE — 2026-03-08. Output: `brand/BRAND-VOICE.md`. Awaiting user approval.
