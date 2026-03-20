@@ -24,3 +24,19 @@
 video/out/
 video/node_modules/
 video/.cache/
+
+# Allow Next.js app
+!app/
+!app/**
+app/node_modules/
+app/.next/
+
+# Allow scan service
+!scan-service/
+!scan-service/**
+scan-service/node_modules/
+scan-service/dist/
+
+# Allow Supabase
+!supabase/
+!supabase/**
