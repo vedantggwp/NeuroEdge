@@ -8,6 +8,7 @@ import { ScoreRing } from "@/components/ScoreRing";
 import { IssueList } from "@/components/IssueList";
 import { RevenueForm } from "@/components/RevenueForm";
 import { RevenueResult } from "@/components/RevenueResult";
+import { ReportCTA } from "@/components/ReportCTA";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { calculateRevenueUplift, type RevenueEstimate } from "@/lib/revenue";
@@ -215,6 +216,17 @@ export default function ScanResultsPage({
             />
           )}
         </Card>
+      </motion.section>
+
+      {/* Report CTA */}
+      <motion.section
+        aria-labelledby="report-heading"
+        className="mt-16"
+        initial={prefersReducedMotion ? {} : { opacity: 0, y: 24 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={prefersReducedMotion ? { duration: 0 } : { delay: 0.6, duration: 0.5 }}
+      >
+        <ReportCTA scanId={id} />
       </motion.section>
     </main>
   );
