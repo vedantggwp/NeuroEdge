@@ -6,8 +6,12 @@ import { getSupabase } from "@/lib/supabase";
 import { ScanProgress } from "@/components/ScanProgress";
 import { ScoreRing } from "@/components/ScoreRing";
 import { IssueList } from "@/components/IssueList";
+import { RevenueForm } from "@/components/RevenueForm";
+import { RevenueResult } from "@/components/RevenueResult";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
+import { calculateRevenueUplift, type RevenueEstimate } from "@/lib/revenue";
+import type { IndustryKey } from "@/lib/constants";
 import type { Issue } from "@/components/IssueCard";
 
 interface ScanData {
@@ -21,6 +25,13 @@ interface ScanData {
 
 type LoadingState = "loading" | "ready" | "error";
 
+interface RevenueFormInput {
+  industry: IndustryKey;
+  monthlyVisitors: number;
+  avgOrderValue: number;
+  conversionRate: number;
+}
+
 export default function ScanResultsPage({
   params,
 }: {
@@ -32,6 +43,8 @@ export default function ScanResultsPage({
   const [state, setState] = useState<LoadingState>("loading");
   const [scan, setScan] = useState<ScanData | null>(null);
   const [errorMsg, setErrorMsg] = useState("");
+  const [revenueEstimate, setRevenueEstimate] = useState<RevenueEstimate | null>(null);
+  const [revenueLoading, setRevenueLoading] = useState(false);
 
   const fetchScan = useCallback(async () => {
     const { data, error } = await getSupabase()
@@ -53,6 +66,30 @@ export default function ScanResultsPage({
   useEffect(() => {
     fetchScan();
   }, [fetchScan]);
+
+  async function handleRevenueSubmit(input: RevenueFormInput) {
+    setRevenueLoading(true);
+    try {
+      // Calculate client-side immediately for instant feedback
+      const estimate = calculateRevenueUplift({
+        monthlyVisitors: input.monthlyVisitors,
+        avgOrderValue: input.avgOrderValue,
+        conversionRate: input.conversionRate,
+      });
+      setRevenueEstimate(estimate);
+
+      // Persist best-effort — don't block on failure
+      await fetch("/api/estimate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ scanId: id, ...input }),
+      }).catch((err) => console.warn("Could not persist revenue estimate:", err));
+    } catch (err) {
+      console.error("Revenue calculation failed:", err);
+    } finally {
+      setRevenueLoading(false);
+    }
+  }
 
   /* Loading state */
   if (state === "loading") {
@@ -136,16 +173,49 @@ export default function ScanResultsPage({
         <IssueList issues={scan.top_issues} />
       </div>
 
-      {/* Placeholder for revenue form + report CTA */}
-      <Card padding="lg" className="text-center">
-        <p className="text-lg font-medium text-text-primary">
-          Revenue estimate and full report coming soon
-        </p>
-        <p className="mt-2 text-sm text-text-secondary">
-          We are building tools to show you exactly how much revenue
-          accessibility gaps may be costing your business.
-        </p>
-      </Card>
+      {/* Revenue estimate section */}
+      <motion.section
+        aria-labelledby="revenue-heading"
+        className="space-y-8"
+        initial={prefersReducedMotion ? {} : { opacity: 0, y: 24 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={prefersReducedMotion ? { duration: 0 } : { delay: 0.4, duration: 0.5 }}
+      >
+        <div>
+          <h2
+            id="revenue-heading"
+            className="font-serif text-2xl text-text-primary sm:text-3xl"
+          >
+            How much could you be making?
+          </h2>
+          <p className="mt-2 text-text-secondary">
+            Answer three quick questions and we'll show you the revenue your
+            accessibility gaps are costing you — with every number shown.
+          </p>
+        </div>
+
+        <Card padding="lg">
+          {revenueEstimate ? (
+            <div className="space-y-8">
+              <RevenueResult estimate={revenueEstimate} />
+              <div className="border-t border-border pt-6">
+                <p className="mb-4 text-sm text-text-secondary">
+                  Want to try different numbers?
+                </p>
+                <RevenueForm
+                  onSubmit={handleRevenueSubmit}
+                  loading={revenueLoading}
+                />
+              </div>
+            </div>
+          ) : (
+            <RevenueForm
+              onSubmit={handleRevenueSubmit}
+              loading={revenueLoading}
+            />
+          )}
+        </Card>
+      </motion.section>
     </main>
   );
 }
