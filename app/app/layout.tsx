@@ -44,6 +44,12 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col bg-bg-primary text-text-primary font-sans">
         <ThemeProvider>
+          <a
+            href="#main-content"
+            className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-accent focus:px-4 focus:py-2 focus:text-[#0A2E26] focus:font-medium focus:shadow-lg"
+          >
+            Skip to main content
+          </a>
           <Header />
           {children}
         </ThemeProvider>

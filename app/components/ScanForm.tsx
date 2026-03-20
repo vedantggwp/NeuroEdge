@@ -81,7 +81,6 @@ export function ScanForm() {
           }}
           error={error}
           autoComplete="url"
-          autoFocus
         />
       </div>
       <Button

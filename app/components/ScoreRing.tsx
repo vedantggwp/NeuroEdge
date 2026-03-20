@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { useEffect } from "react";
+import { motion, useReducedMotion, useMotionValue, useTransform, animate } from "framer-motion";
 
 interface ScoreRingProps {
   score: number;
@@ -28,6 +29,16 @@ export function ScoreRing({
   const clamped = Math.max(0, Math.min(100, score));
   const offset = circumference - (clamped / 100) * circumference;
   const color = scoreColor(clamped);
+
+  // Animated count-up
+  const motionVal = useMotionValue(prefersReducedMotion ? clamped : 0);
+  const displayScore = useTransform(motionVal, (v) => Math.round(v));
+
+  useEffect(() => {
+    if (prefersReducedMotion) return;
+    const controls = animate(motionVal, clamped, { duration: 1.5, ease: "easeOut" });
+    return () => controls.stop();
+  }, [motionVal, clamped, prefersReducedMotion]);
 
   return (
     <div className="flex flex-col items-center gap-3" aria-label={`${label}: ${clamped} out of 100`}>
@@ -83,10 +94,10 @@ export function ScoreRing({
           transition={
             prefersReducedMotion
               ? { duration: 0 }
-              : { delay: 0.5, duration: 0.8 }
+              : { delay: 0.3, duration: 0.5 }
           }
         >
-          {clamped}
+          <motion.tspan>{displayScore}</motion.tspan>
         </motion.text>
       </svg>
       <p className="text-sm font-medium text-text-secondary">{label}</p>
