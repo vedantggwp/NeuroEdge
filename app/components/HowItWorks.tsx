@@ -40,7 +40,7 @@ export function HowItWorks() {
     <section
       id="how"
       aria-labelledby="how-it-works-heading"
-      className="py-28 px-6"
+      className="px-6 py-16 sm:py-28"
     >
       <div className="mx-auto max-w-[1200px]">
         <div className="reveal">

@@ -5,7 +5,7 @@ export function WhyCare() {
     <section
       id="why-care"
       aria-labelledby="why-care-heading"
-      className="py-28 px-6 bg-bg-subtle"
+      className="bg-bg-subtle px-6 py-16 sm:py-28"
     >
       <div className="mx-auto max-w-[1200px]">
         <div className="reveal">

@@ -25,7 +25,7 @@ export function SocialProof() {
     <section
       id="stats"
       aria-labelledby="social-proof-heading"
-      className="py-28 px-6"
+      className="px-6 py-16 sm:py-28"
     >
       <div className="mx-auto max-w-[1200px]">
         <div className="reveal">

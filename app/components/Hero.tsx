@@ -6,7 +6,7 @@ export function Hero() {
     <section
       id="hero"
       aria-labelledby="hero-heading"
-      className="relative flex min-h-[100dvh] flex-col items-center justify-center px-6 pt-32 pb-24 text-center"
+      className="relative flex min-h-[100dvh] flex-col items-center justify-center px-6 pt-24 pb-16 text-center sm:pt-32 sm:pb-24"
     >
       {/* Eyebrow badge */}
       <div className="reveal mb-8 inline-flex items-center gap-2 rounded-full border border-[#bbf7d0] bg-[#f0fdf4] px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.04em] text-[#15803d]">
@@ -37,7 +37,7 @@ export function Hero() {
         No signup. No card. Results on screen in 30 seconds.
       </p>
 
-      <div className="mt-16 w-full">
+      <div className="mt-16 hidden w-full lg:block">
         <ReportPreview />
       </div>
     </section>

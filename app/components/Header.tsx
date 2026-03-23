@@ -49,7 +49,7 @@ export function Header() {
       >
         <a
           href="/"
-          className="font-extrabold text-base tracking-tight text-navy"
+          className="px-1 py-2 font-extrabold text-base tracking-tight text-navy"
           onClick={closeMenu}
         >
           Neuro<span className="text-accent">Edge</span>

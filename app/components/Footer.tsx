@@ -11,9 +11,9 @@ export function Footer() {
           Every customer counts. Especially the ones your website is turning away.
         </p>
         <nav aria-label="Legal" className="flex items-center gap-5">
-          <a href="/privacy" className="text-xs text-text-tertiary hover:text-accent transition-colors">Privacy</a>
-          <a href="/terms" className="text-xs text-text-tertiary hover:text-accent transition-colors">Terms</a>
-          <a href="/accessibility" className="text-xs text-text-tertiary hover:text-accent transition-colors">Accessibility</a>
+          <a href="/privacy" className="py-2 text-xs text-text-tertiary transition-colors hover:text-accent">Privacy</a>
+          <a href="/terms" className="py-2 text-xs text-text-tertiary transition-colors hover:text-accent">Terms</a>
+          <a href="/accessibility" className="py-2 text-xs text-text-tertiary transition-colors hover:text-accent">Accessibility</a>
         </nav>
         <p className="text-xs text-text-tertiary">
           Built in {SITE.location} &middot; 2026
