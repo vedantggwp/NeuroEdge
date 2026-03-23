@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { motion, useReducedMotion, useMotionValue, useTransform, animate } from "framer-motion";
+import gsap from "gsap";
 import { Card } from "@/components/ui/Card";
 import { ACCESSIBILITY_STATS } from "@/lib/constants";
 import type { RevenueEstimate } from "@/lib/revenue";
@@ -10,24 +10,41 @@ interface RevenueResultProps {
   estimate: RevenueEstimate;
 }
 
+function prefersReducedMotion(): boolean {
+  if (typeof window === "undefined") return false;
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
 /** Animated count-up for a single number */
 function CountUp({ target, prefix = "", suffix = "" }: { target: number; prefix?: string; suffix?: string }) {
-  const prefersReducedMotion = useReducedMotion();
-  const motionVal = useMotionValue(prefersReducedMotion ? target : 0);
-  const rounded = useTransform(motionVal, (v) => Math.round(v).toLocaleString("en-GB"));
-  const ref = useRef<HTMLSpanElement>(null);
+  const spanRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
-    if (prefersReducedMotion) return;
-    const controls = animate(motionVal, target, { duration: 1.2, ease: "easeOut" });
-    return () => controls.stop();
-  }, [motionVal, target, prefersReducedMotion]);
+    if (prefersReducedMotion() || !spanRef.current) {
+      if (spanRef.current) {
+        spanRef.current.textContent = `${prefix}${Math.round(target).toLocaleString("en-GB")}${suffix}`;
+      }
+      return;
+    }
+
+    const counter = { val: 0 };
+    const tween = gsap.to(counter, {
+      val: target,
+      duration: 1.2,
+      ease: "power2.out",
+      onUpdate() {
+        if (spanRef.current) {
+          spanRef.current.textContent = `${prefix}${Math.round(counter.val).toLocaleString("en-GB")}${suffix}`;
+        }
+      },
+    });
+
+    return () => { tween.kill(); };
+  }, [target, prefix, suffix]);
 
   return (
-    <span ref={ref}>
-      {prefix}
-      <motion.span>{rounded}</motion.span>
-      {suffix}
+    <span ref={spanRef}>
+      {prefix}0{suffix}
     </span>
   );
 }
@@ -49,7 +66,7 @@ function FormulaRow({ children }: FormulaRowProps) {
 }
 
 export function RevenueResult({ estimate }: RevenueResultProps) {
-  const prefersReducedMotion = useReducedMotion();
+  const reduced = prefersReducedMotion();
   const {
     disabledVisitors,
     lostVisitors,
@@ -63,22 +80,17 @@ export function RevenueResult({ estimate }: RevenueResultProps) {
     ACCESSIBILITY_STATS;
 
   return (
-    <motion.div
-      initial={prefersReducedMotion ? {} : { opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.5 }}
-      className="space-y-6"
-    >
+    <div className="animate-fade-up space-y-6">
       {/* Headline */}
       <Card padding="lg" className="border-[var(--revenue)] bg-[var(--revenue-bg)]">
         <p className="text-sm font-medium uppercase tracking-wider text-[var(--revenue)]">
           Potential monthly uplift
         </p>
         <p
-          className="mt-2 font-serif text-4xl font-bold text-[var(--revenue)] sm:text-5xl"
+          className="mt-2 font-sans text-4xl font-bold text-[var(--revenue)] sm:text-5xl"
           aria-label={`You could be making £${revenueUpliftLow.toLocaleString("en-GB")} to £${revenueUpliftHigh.toLocaleString("en-GB")} more per month`}
         >
-          {prefersReducedMotion ? (
+          {reduced ? (
             <>
               £{revenueUpliftLow.toLocaleString("en-GB")} – £{revenueUpliftHigh.toLocaleString("en-GB")}
             </>
@@ -131,6 +143,6 @@ export function RevenueResult({ estimate }: RevenueResultProps) {
           will vary.
         </p>
       </Card>
-    </motion.div>
+    </div>
   );
 }

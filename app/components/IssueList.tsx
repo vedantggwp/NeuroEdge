@@ -22,7 +22,7 @@ export function IssueList({ issues }: IssueListProps) {
 
   return (
     <section aria-label="Top accessibility issues">
-      <h2 className="mb-4 font-serif text-2xl text-text-primary">
+      <h2 className="mb-4 font-sans text-2xl text-text-primary">
         Top Issues
       </h2>
       <div className="flex flex-col gap-4">

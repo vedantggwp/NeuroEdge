@@ -1,0 +1,1886 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <meta name="color-scheme" content="only light" />
+    <title>NeuroEdge Demo Animation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --navy: #0f2b4c;
+        --navy-deep: #0a1f36;
+        --teal: #2dd4a8;
+        --teal-deep: #0f9f78;
+        --amber: #f59e0b;
+        --amber-deep: #b96d04;
+        --red: #ef4444;
+        --bg: #fafbfc;
+        --card: #ffffff;
+        --border: rgba(15, 43, 76, 0.06);
+        --border-strong: rgba(15, 43, 76, 0.1);
+        --text-secondary: rgba(15, 43, 76, 0.55);
+        --text-tertiary: rgba(15, 43, 76, 0.35);
+        --surface-hover: rgba(15, 43, 76, 0.03);
+        --shadow-soft: 0 1px 3px rgba(15, 43, 76, 0.04), 0 8px 24px rgba(15, 43, 76, 0.06);
+        --shadow-card: 0 4px 16px rgba(15, 43, 76, 0.06), 0 1px 3px rgba(15, 43, 76, 0.04);
+        --shadow-browser: 0 8px 40px rgba(15, 43, 76, 0.08);
+        --ease-standard: cubic-bezier(0.32, 0.72, 0, 1);
+        --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+        --sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        overflow: hidden;
+        background: #eef3f7;
+      }
+
+      body {
+        min-width: 840px;
+        min-height: 540px;
+        font-family: var(--sans);
+        color: var(--navy);
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+      }
+
+      .stage {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background:
+          radial-gradient(circle at 14% 16%, rgba(45, 212, 168, 0.18), transparent 28%),
+          radial-gradient(circle at 83% 18%, rgba(15, 43, 76, 0.08), transparent 30%),
+          radial-gradient(circle at 86% 82%, rgba(245, 158, 11, 0.14), transparent 26%),
+          linear-gradient(180deg, #f5f8fb 0%, #e9eff5 100%);
+      }
+
+      .stage::before,
+      .stage::after {
+        content: "";
+        position: absolute;
+        border-radius: 999px;
+        pointer-events: none;
+        filter: blur(12px);
+      }
+
+      .stage::before {
+        left: -120px;
+        bottom: -120px;
+        width: 300px;
+        height: 300px;
+        background: radial-gradient(circle, rgba(15, 43, 76, 0.08), transparent 68%);
+      }
+
+      .stage::after {
+        right: -100px;
+        top: -90px;
+        width: 280px;
+        height: 280px;
+        background: radial-gradient(circle, rgba(45, 212, 168, 0.18), transparent 72%);
+      }
+
+      .stage-grid {
+        position: absolute;
+        inset: -20%;
+        background-image:
+          linear-gradient(rgba(15, 43, 76, 0.04) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(15, 43, 76, 0.04) 1px, transparent 1px);
+        background-size: 32px 32px;
+        opacity: 0.28;
+        mask-image: radial-gradient(circle at center, black 42%, transparent 84%);
+        pointer-events: none;
+      }
+
+      .browser {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 760px;
+        height: 470px;
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.94);
+        box-shadow: var(--shadow-browser);
+        overflow: hidden;
+        transform: translate(-50%, -50%);
+        transform-origin: 50% 50%;
+        will-change: transform, opacity;
+      }
+
+      .browser::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        pointer-events: none;
+      }
+
+      .browser-titlebar {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        height: 50px;
+        padding: 0 18px;
+        border-bottom: 1px solid var(--border);
+        background: #fafbfc;
+      }
+
+      .traffic-lights {
+        display: flex;
+        gap: 8px;
+      }
+
+      .traffic-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 999px;
+      }
+
+      .traffic-dot.red {
+        background: #ff5f57;
+      }
+
+      .traffic-dot.amber {
+        background: #febc2e;
+      }
+
+      .traffic-dot.green {
+        background: #28c840;
+      }
+
+      .address-bar {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        min-width: 286px;
+        margin: 0 auto;
+        padding: 10px 18px;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.94);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85);
+        color: var(--navy);
+        font: 700 11px/1 var(--mono);
+        letter-spacing: 0.04em;
+      }
+
+      .address-indicator {
+        width: 7px;
+        height: 7px;
+        border-radius: 999px;
+        background: var(--teal);
+        box-shadow: 0 0 0 5px rgba(45, 212, 168, 0.12);
+      }
+
+      .browser-body {
+        position: relative;
+        height: calc(100% - 50px);
+        overflow: hidden;
+        background:
+          radial-gradient(circle at 14% 10%, rgba(45, 212, 168, 0.12), transparent 28%),
+          radial-gradient(circle at 88% 12%, rgba(15, 43, 76, 0.06), transparent 26%),
+          linear-gradient(180deg, #fbfcfd 0%, #f2f6fa 100%);
+      }
+
+      .browser-body::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+          linear-gradient(rgba(15, 43, 76, 0.025) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(15, 43, 76, 0.025) 1px, transparent 1px);
+        background-size: 34px 34px;
+        opacity: 0.55;
+        mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.2), transparent 72%);
+        pointer-events: none;
+      }
+
+      .page-bar {
+        position: absolute;
+        left: 24px;
+        right: 24px;
+        top: 16px;
+        z-index: 3;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+      }
+
+      .brandmark {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--navy);
+        font-size: 16px;
+        font-weight: 800;
+        letter-spacing: -0.04em;
+      }
+
+      .brandmark strong {
+        color: var(--teal-deep);
+      }
+
+      .brandmark-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 4px;
+        background: linear-gradient(135deg, var(--teal), #8cf0cf);
+        box-shadow: 0 0 0 6px rgba(45, 212, 168, 0.11);
+      }
+
+      .page-nav {
+        display: inline-flex;
+        align-items: center;
+        gap: 16px;
+        color: var(--text-secondary);
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      .page-chip {
+        display: inline-flex;
+        align-items: center;
+        padding: 8px 12px;
+        border: 1px solid rgba(45, 212, 168, 0.2);
+        border-radius: 999px;
+        background: rgba(45, 212, 168, 0.1);
+        color: var(--teal-deep);
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+      }
+
+      .hero-layer,
+      .scan-layer,
+      .results-layer {
+        position: absolute;
+        left: 24px;
+        right: 24px;
+        top: 52px;
+        bottom: 16px;
+        will-change: transform, opacity, filter;
+      }
+
+      .hero-layer {
+        display: grid;
+        grid-template-columns: minmax(0, 1.12fr) minmax(220px, 0.88fr);
+        gap: 28px;
+        align-items: center;
+      }
+
+      .hero-copy,
+      .hero-panel,
+      .scan-card,
+      .results-shell,
+      .report-overlay {
+        will-change: transform, opacity, filter;
+      }
+
+      .hero-copy h1 {
+        max-width: 400px;
+        margin: 14px 0 10px;
+        color: var(--navy);
+        font-size: 32px;
+        line-height: 1.08;
+        letter-spacing: -0.04em;
+      }
+
+      .hero-copy h1 span {
+        color: var(--teal-deep);
+      }
+
+      .hero-copy p {
+        max-width: 400px;
+        margin: 0;
+        color: var(--text-secondary);
+        font-size: 13px;
+        line-height: 1.55;
+      }
+
+      .eyebrow,
+      .panel-label,
+      .score-kicker,
+      .issue-card strong,
+      .report-chip {
+        font-size: 11px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 6px 11px;
+        border: 1px solid rgba(45, 212, 168, 0.22);
+        border-radius: 999px;
+        background: rgba(45, 212, 168, 0.1);
+        color: var(--teal-deep);
+        font-weight: 700;
+      }
+
+      .eyebrow::before {
+        content: "";
+        width: 7px;
+        height: 7px;
+        border-radius: 999px;
+        background: var(--teal);
+        box-shadow: 0 0 0 6px rgba(45, 212, 168, 0.12);
+        animation: pulse 2.1s infinite;
+      }
+
+      .form-shell {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 8px;
+        max-width: 480px;
+        margin-top: 18px;
+        padding: 6px;
+        border: 1px solid var(--border);
+        border-radius: 24px;
+        background: rgba(255, 255, 255, 0.96);
+        box-shadow: var(--shadow-card);
+      }
+
+      .field-shell {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-height: 46px;
+        padding: 0 14px;
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        background: linear-gradient(180deg, rgba(250, 252, 253, 0.98), rgba(255, 255, 255, 0.98));
+        transition:
+          border-color 240ms var(--ease-standard),
+          box-shadow 240ms var(--ease-standard),
+          transform 240ms var(--ease-standard);
+      }
+
+      .field-shell.is-focused {
+        border-color: rgba(245, 158, 11, 0.28);
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.92),
+          0 0 0 5px rgba(245, 158, 11, 0.12);
+      }
+
+      .field-icon {
+        position: relative;
+        width: 20px;
+        height: 20px;
+        flex: 0 0 20px;
+        border-radius: 999px;
+        background: rgba(15, 43, 76, 0.04);
+      }
+
+      .field-icon::before,
+      .field-icon::after {
+        content: "";
+        position: absolute;
+        inset: 3px;
+        border: 1.5px solid rgba(15, 43, 76, 0.4);
+        border-radius: 999px;
+      }
+
+      .field-icon::after {
+        inset: 3px 7px;
+      }
+
+      .field-text {
+        min-width: 0;
+        display: flex;
+        align-items: center;
+      }
+
+      .field-placeholder,
+      .field-value-wrap {
+        display: inline-flex;
+        align-items: center;
+        gap: 3px;
+      }
+
+      .field-placeholder {
+        color: rgba(15, 43, 76, 0.35);
+        font-size: 15px;
+        font-weight: 500;
+        opacity: 1;
+        transition: opacity 180ms linear;
+      }
+
+      .field-value-wrap {
+        display: none;
+        color: var(--navy);
+        font-size: 15px;
+        font-weight: 600;
+        letter-spacing: -0.02em;
+        white-space: nowrap;
+        overflow: hidden;
+        opacity: 0;
+      }
+
+      .field-caret {
+        width: 2px;
+        height: 18px;
+        border-radius: 999px;
+        background: var(--amber);
+        animation: caret 1s steps(1) infinite;
+      }
+
+      .cta-button {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-width: 180px;
+        min-height: 46px;
+        padding: 0 18px;
+        border: 0;
+        border-radius: 18px;
+        background: linear-gradient(135deg, #f8b43b 0%, var(--amber) 100%);
+        color: var(--navy-deep);
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.42),
+          0 12px 26px rgba(245, 158, 11, 0.24);
+        font: inherit;
+        font-size: 13px;
+        font-weight: 800;
+        letter-spacing: -0.01em;
+        transform: scale(1);
+        transition:
+          transform 150ms var(--ease-standard),
+          box-shadow 150ms var(--ease-standard),
+          filter 150ms var(--ease-standard);
+      }
+
+      .cta-button::after {
+        content: "";
+        width: 12px;
+        height: 12px;
+        border-top: 2px solid currentColor;
+        border-right: 2px solid currentColor;
+        transform: rotate(45deg) translateY(-1px);
+      }
+
+      .cta-button.is-pressed {
+        transform: scale(0.98);
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.36),
+          0 7px 18px rgba(245, 158, 11, 0.18);
+      }
+
+      .micro-copy {
+        margin-top: 8px;
+        color: var(--text-tertiary);
+        font-size: 12px;
+        font-weight: 500;
+      }
+
+      .bevel-card {
+        padding: 6px;
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        background: rgba(15, 43, 76, 0.02);
+        box-shadow: var(--shadow-soft);
+      }
+
+      .bevel-inner {
+        height: 100%;
+        border-radius: 14px;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.99), rgba(247, 250, 252, 0.97));
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+      }
+
+      .hero-panel-inner {
+        padding: 14px 14px 12px;
+      }
+
+      .panel-label {
+        color: var(--text-tertiary);
+        font-weight: 700;
+      }
+
+      .hero-panel h2 {
+        margin: 8px 0 0;
+        color: var(--navy);
+        font-size: 17px;
+        line-height: 1.12;
+        letter-spacing: -0.04em;
+      }
+
+      .hero-signals {
+        display: grid;
+        gap: 8px;
+        margin-top: 14px;
+      }
+
+      .hero-signal {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 7px 10px;
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        background: rgba(15, 43, 76, 0.03);
+      }
+
+      .hero-signal span {
+        color: var(--navy);
+        font-size: 11px;
+        font-weight: 600;
+        line-height: 1.3;
+      }
+
+      .hero-signal strong {
+        color: var(--teal-deep);
+        font: 700 11px/1 var(--mono);
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+
+      .hero-stats {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        margin-top: 10px;
+      }
+
+      .hero-stat {
+        padding: 8px 10px;
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        background: rgba(15, 43, 76, 0.03);
+      }
+
+      .hero-stat strong {
+        display: block;
+        color: var(--navy);
+        font: 800 17px/1 var(--mono);
+        letter-spacing: -0.06em;
+      }
+
+      .hero-stat span {
+        display: block;
+        margin-top: 4px;
+        color: var(--text-secondary);
+        font-size: 9px;
+        line-height: 1.3;
+      }
+
+      .scan-layer {
+        display: grid;
+        place-items: center;
+      }
+
+      .scan-card {
+        width: 638px;
+      }
+
+      .scan-card-inner {
+        display: grid;
+        grid-template-columns: minmax(0, 1.08fr) 184px;
+        gap: 20px;
+        align-items: center;
+        padding: 22px 24px;
+      }
+
+      .scan-copy {
+        min-width: 0;
+      }
+
+      .scan-kicker {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 7px 11px;
+        border: 1px solid rgba(45, 212, 168, 0.2);
+        border-radius: 999px;
+        background: rgba(45, 212, 168, 0.1);
+        color: var(--teal-deep);
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      .scan-kicker::before {
+        content: "";
+        width: 7px;
+        height: 7px;
+        border-radius: 999px;
+        background: var(--teal);
+      }
+
+      .scan-message-stack {
+        position: relative;
+        height: 38px;
+        margin: 18px 0 18px;
+        overflow: hidden;
+      }
+
+      .scan-message {
+        position: absolute;
+        inset: 0 auto auto 0;
+        color: var(--navy);
+        font-size: 26px;
+        white-space: nowrap;
+        font-weight: 800;
+        letter-spacing: -0.06em;
+        line-height: 1.04;
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      .scan-note {
+        max-width: 360px;
+        margin: 0 0 18px;
+        color: var(--text-secondary);
+        font-size: 14px;
+        line-height: 1.65;
+      }
+
+      .progress-track {
+        position: relative;
+        height: 12px;
+        border-radius: 999px;
+        overflow: hidden;
+        background: rgba(15, 43, 76, 0.08);
+      }
+
+      .progress-fill {
+        position: absolute;
+        inset: 0 auto 0 0;
+        width: 0%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, var(--amber) 0%, var(--teal) 100%);
+        box-shadow: 0 8px 20px rgba(45, 212, 168, 0.24);
+      }
+
+      .progress-meta {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 10px;
+        color: var(--text-tertiary);
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      .progress-meta strong {
+        color: var(--navy);
+        font: 700 12px/1 var(--mono);
+      }
+
+      .scan-visual {
+        display: grid;
+        justify-items: center;
+        gap: 14px;
+      }
+
+      .scan-orbit {
+        position: relative;
+        width: 152px;
+        height: 152px;
+        border-radius: 999px;
+        background: radial-gradient(circle at center, rgba(45, 212, 168, 0.16), rgba(45, 212, 168, 0.04) 46%, transparent 72%);
+        box-shadow: inset 0 0 0 1px rgba(45, 212, 168, 0.12);
+      }
+
+      .scan-orbit::before,
+      .scan-orbit::after {
+        content: "";
+        position: absolute;
+        inset: 18px;
+        border: 1px solid rgba(15, 43, 76, 0.08);
+        border-radius: inherit;
+      }
+
+      .scan-orbit::after {
+        inset: 38px;
+      }
+
+      .scan-beam {
+        position: absolute;
+        inset: 16px;
+        border-radius: inherit;
+        background: conic-gradient(from 220deg, transparent 0deg, rgba(45, 212, 168, 0.74) 56deg, transparent 100deg);
+        animation: orbit 2.6s linear infinite;
+      }
+
+      .scan-core {
+        position: absolute;
+        inset: 50px;
+        display: grid;
+        place-items: center;
+        border-radius: inherit;
+        background: linear-gradient(135deg, rgba(10, 31, 54, 1), rgba(19, 51, 85, 0.94));
+        color: white;
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.08),
+          0 18px 30px rgba(15, 43, 76, 0.18);
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+      }
+
+      .scan-tags {
+        display: grid;
+        gap: 8px;
+        width: 100%;
+      }
+
+      .scan-tag {
+        padding: 9px 11px;
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        background: rgba(15, 43, 76, 0.03);
+        color: var(--text-secondary);
+        font-size: 11px;
+        font-weight: 600;
+      }
+
+      .results-layer {
+        display: grid;
+        align-items: stretch;
+      }
+
+      .results-shell-inner {
+        display: grid;
+        gap: 12px;
+        height: 100%;
+        padding: 14px 16px 16px;
+      }
+
+      .results-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 16px;
+      }
+
+      .results-head h2 {
+        margin: 8px 0 5px;
+        color: var(--navy);
+        font-size: 24px;
+        line-height: 1;
+        letter-spacing: -0.06em;
+      }
+
+      .results-domain {
+        margin: 0;
+        color: var(--text-secondary);
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      .status-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 14px;
+        border: 1px solid rgba(245, 158, 11, 0.2);
+        border-radius: 999px;
+        background: rgba(245, 158, 11, 0.1);
+        color: var(--amber-deep);
+        font: 700 12px/1 var(--mono);
+        letter-spacing: 0.04em;
+        white-space: nowrap;
+      }
+
+      .status-pill::before {
+        content: "";
+        width: 8px;
+        height: 8px;
+        border-radius: 999px;
+        background: var(--amber);
+        box-shadow: 0 0 0 6px rgba(245, 158, 11, 0.12);
+      }
+
+      .results-main {
+        display: grid;
+        grid-template-columns: 196px minmax(0, 1fr);
+        gap: 14px;
+        align-items: start;
+      }
+
+      .score-card {
+        padding: 12px;
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        background: rgba(15, 43, 76, 0.03);
+        text-align: center;
+      }
+
+      .score-kicker {
+        color: var(--text-tertiary);
+        font-weight: 700;
+      }
+
+      .score-ring {
+        display: block;
+        margin: 10px auto 8px;
+      }
+
+      .ring-track {
+        stroke: rgba(15, 43, 76, 0.08);
+      }
+
+      .ring-progress {
+        stroke: var(--amber);
+        stroke-dasharray: 464.96;
+        stroke-dashoffset: 464.96;
+      }
+
+      .score-caption {
+        margin: 0;
+        color: var(--navy);
+        font-size: 12px;
+        font-weight: 700;
+        line-height: 1.45;
+      }
+
+      .results-copy {
+        display: grid;
+        gap: 10px;
+      }
+
+      .results-summary {
+        margin: 0;
+        color: var(--navy);
+        font-size: 14px;
+        font-weight: 700;
+        line-height: 1.4;
+        letter-spacing: -0.02em;
+      }
+
+      .stats-row {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      .stat-badge {
+        padding: 10px 10px 9px;
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        background: rgba(15, 43, 76, 0.03);
+        opacity: 0;
+        transform: translateY(12px) scale(0.97);
+      }
+
+      .stat-badge strong {
+        display: block;
+        color: var(--navy);
+        font: 800 19px/1 var(--mono);
+        letter-spacing: -0.05em;
+      }
+
+      .stat-badge span {
+        display: block;
+        margin-top: 6px;
+        color: var(--text-secondary);
+        font-size: 10px;
+        font-weight: 600;
+        line-height: 1.4;
+      }
+
+      .issue-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      .issue-card {
+        padding: 10px 11px;
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(247, 250, 252, 0.95));
+        opacity: 0;
+        transform: translateY(14px) scale(0.97);
+      }
+
+      .issue-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 7px;
+      }
+
+      .severity-pill {
+        display: inline-flex;
+        align-items: center;
+        padding: 5px 8px;
+        border-radius: 999px;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+
+      .severity-pill.easy {
+        color: var(--teal-deep);
+        background: rgba(45, 212, 168, 0.1);
+      }
+
+      .severity-pill.medium {
+        color: var(--amber-deep);
+        background: rgba(245, 158, 11, 0.1);
+      }
+
+      .severity-pill.hard {
+        color: var(--red);
+        background: rgba(239, 68, 68, 0.1);
+      }
+
+      .issue-meta {
+        color: var(--text-tertiary);
+        font: 700 9px/1 var(--mono);
+        letter-spacing: 0.04em;
+      }
+
+      .issue-card h3 {
+        margin: 0;
+        color: var(--navy);
+        font-size: 12px;
+        line-height: 1.35;
+        letter-spacing: -0.02em;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+      }
+
+      .issue-card p {
+        margin: 5px 0 0;
+        color: var(--text-secondary);
+        font-size: 10px;
+        line-height: 1.45;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .report-overlay {
+        position: absolute;
+        right: 18px;
+        bottom: 22px;
+        z-index: 8;
+        width: 302px;
+        max-height: calc(100% - 80px);
+        overflow: hidden;
+        opacity: 0;
+        transform-origin: 88% 100%;
+        will-change: transform, opacity;
+      }
+
+      .report-overlay-inner {
+        padding: 16px;
+      }
+
+      .report-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .report-head h3 {
+        margin: 8px 0 0;
+        color: var(--navy);
+        font-size: 20px;
+        line-height: 1.06;
+        letter-spacing: -0.05em;
+      }
+
+      .report-chip {
+        display: inline-flex;
+        align-items: center;
+        padding: 8px 11px;
+        border-radius: 999px;
+        background: rgba(15, 43, 76, 0.06);
+        color: var(--text-secondary);
+        font-weight: 700;
+        white-space: nowrap;
+      }
+
+      .fix-kit-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 14px;
+      }
+
+      .fix-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 9px 13px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+      }
+
+      .fix-badge.teal {
+        background: var(--teal);
+        color: white;
+      }
+
+      .fix-badge.navy {
+        background: rgba(15, 43, 76, 0.08);
+        color: var(--navy);
+      }
+
+      .report-list {
+        display: grid;
+        gap: 9px;
+        margin-top: 14px;
+      }
+
+      .report-row {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 11px 12px;
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        background: rgba(15, 43, 76, 0.03);
+      }
+
+      .report-row strong {
+        display: block;
+        color: var(--navy);
+        font-size: 12px;
+        line-height: 1.45;
+        letter-spacing: -0.01em;
+      }
+
+      .report-row span {
+        flex: 0 0 auto;
+        color: var(--text-tertiary);
+        font: 700 10px/1.3 var(--mono);
+        text-align: right;
+      }
+
+      .report-foot {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 12px;
+        color: var(--text-tertiary);
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      .cursor {
+        position: absolute;
+        left: 0;
+        top: 0;
+        z-index: 9;
+        width: 27px;
+        height: 31px;
+        pointer-events: none;
+        opacity: 0;
+        transform-origin: 0 0;
+        will-change: transform, opacity;
+      }
+
+      .cursor svg {
+        display: block;
+        width: 100%;
+        height: 100%;
+        filter: drop-shadow(0 10px 16px rgba(15, 43, 76, 0.18));
+      }
+
+      .fade-to-black {
+        position: absolute;
+        inset: 0;
+        z-index: 20;
+        background: #05080c;
+        pointer-events: none;
+        opacity: 1;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          box-shadow: 0 0 0 0 rgba(45, 212, 168, 0.18);
+        }
+
+        50% {
+          box-shadow: 0 0 0 10px rgba(45, 212, 168, 0);
+        }
+      }
+
+      @keyframes caret {
+        0%,
+        48% {
+          opacity: 1;
+        }
+
+        50%,
+        100% {
+          opacity: 0;
+        }
+      }
+
+      @keyframes orbit {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+          scroll-behavior: auto !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="stage" aria-label="Animated NeuroEdge demo capture">
+      <div class="stage-grid" aria-hidden="true"></div>
+
+      <section class="browser" id="browser" aria-hidden="true">
+        <div class="browser-titlebar">
+          <div class="traffic-lights">
+            <span class="traffic-dot red"></span>
+            <span class="traffic-dot amber"></span>
+            <span class="traffic-dot green"></span>
+          </div>
+          <div class="address-bar">
+            <span class="address-indicator"></span>
+            <span>neuroedge.co.uk</span>
+          </div>
+        </div>
+
+        <div class="browser-body" id="browserBody">
+          <header class="page-bar" id="pageBar">
+            <div class="brandmark">
+              <span class="brandmark-dot"></span>
+              <span>Neuro<strong>Edge</strong></span>
+            </div>
+            <div class="page-nav">
+              <span>Evidence</span>
+              <span>How It Works</span>
+              <span class="page-chip">30 second scan</span>
+            </div>
+          </header>
+
+          <section class="hero-layer" id="heroLayer">
+            <div class="hero-copy" id="heroCopy">
+              <div class="eyebrow">UK Accessibility Intelligence</div>
+              <h1>
+                How much more could your website
+                <span>be making?</span>
+              </h1>
+              <p>
+                NeuroEdge scans your site in 30 seconds, finds accessibility blockers,
+                and turns them into a fix list your team can act on immediately.
+              </p>
+
+              <div class="form-shell">
+                <div class="field-shell" id="fieldShell">
+                  <span class="field-icon" aria-hidden="true"></span>
+                  <div class="field-text">
+                    <span class="field-placeholder" id="fieldPlaceholder">Enter your website URL</span>
+                    <span class="field-value-wrap" id="fieldValueWrap">
+                      <span id="typedValue"></span>
+                      <span class="field-caret" id="fieldCaret"></span>
+                    </span>
+                  </div>
+                </div>
+                <button class="cta-button" id="ctaButton" type="button">
+                  Check My Website Free
+                </button>
+              </div>
+
+              <div class="micro-copy">
+                No signup. No card. Results on screen in 30 seconds.
+              </div>
+            </div>
+
+            <aside class="hero-panel bevel-card" id="heroPanel">
+              <div class="bevel-inner hero-panel-inner">
+                <div class="panel-label">What the scan finds first</div>
+                <h2>Small blockers with outsized revenue cost.</h2>
+
+                <div class="hero-signals">
+                  <div class="hero-signal">
+                    <span>Checkout button contrast on white</span>
+                    <strong>Contrast</strong>
+                  </div>
+                  <div class="hero-signal">
+                    <span>Keyboard flow through bouquet picker</span>
+                    <strong>Journey</strong>
+                  </div>
+                </div>
+
+                <div class="hero-stats">
+                  <div class="hero-stat">
+                    <strong>71%</strong>
+                    <span>Leave sites they cannot use properly.</span>
+                  </div>
+                  <div class="hero-stat">
+                    <strong>30s</strong>
+                    <span>To turn a site scan into a fix summary.</span>
+                  </div>
+                </div>
+              </div>
+            </aside>
+          </section>
+
+          <section class="scan-layer" id="scanLayer">
+            <div class="scan-card bevel-card">
+              <div class="bevel-inner scan-card-inner">
+                <div class="scan-copy">
+                  <div class="scan-kicker">bloom-and-petal.co.uk</div>
+
+                  <div class="scan-message-stack">
+                    <div class="scan-message" data-message>Checking colour contrast...</div>
+                    <div class="scan-message" data-message>Testing keyboard navigation...</div>
+                    <div class="scan-message" data-message>Analysing form labels...</div>
+                  </div>
+
+                  <p class="scan-note">
+                    Running the revenue-risk checks first so Bloom &amp; Petal can see
+                    which customer journeys are leaking bookings.
+                  </p>
+
+                  <div class="progress-track">
+                    <div class="progress-fill" id="progressFill"></div>
+                  </div>
+
+                  <div class="progress-meta">
+                    <span>WCAG audit in progress</span>
+                    <strong id="progressValue">0%</strong>
+                  </div>
+                </div>
+
+                <div class="scan-visual">
+                  <div class="scan-orbit">
+                    <div class="scan-beam"></div>
+                    <div class="scan-core">Audit</div>
+                  </div>
+
+                  <div class="scan-tags">
+                    <div class="scan-tag">Contrast across primary actions</div>
+                    <div class="scan-tag">Keyboard travel through forms</div>
+                    <div class="scan-tag">Accessible labels and button names</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="results-layer" id="resultsLayer">
+            <div class="results-shell bevel-card" id="resultsShell">
+              <div class="bevel-inner results-shell-inner">
+                <div class="results-head">
+                  <div>
+                    <div class="panel-label">Accessibility Audit</div>
+                    <h2>Bloom &amp; Petal needs attention.</h2>
+                    <p class="results-domain">www.bloom-and-petal.co.uk</p>
+                  </div>
+                  <div class="status-pill">42 / 100</div>
+                </div>
+
+                <div class="results-main">
+                  <div class="score-card">
+                    <div class="score-kicker">Accessibility Score</div>
+                    <svg class="score-ring" width="160" height="160" viewBox="0 0 160 160">
+                      <circle
+                        class="ring-track"
+                        cx="80"
+                        cy="80"
+                        r="74"
+                        fill="none"
+                        stroke-width="12"
+                      ></circle>
+                      <circle
+                        class="ring-progress"
+                        id="scoreProgressCircle"
+                        cx="80"
+                        cy="80"
+                        r="74"
+                        fill="none"
+                        stroke-width="12"
+                        stroke-linecap="round"
+                        transform="rotate(-90 80 80)"
+                      ></circle>
+                      <text
+                        id="scoreText"
+                        x="80"
+                        y="78"
+                        text-anchor="middle"
+                        fill="#0f2b4c"
+                        font-family="JetBrains Mono, monospace"
+                        font-size="36"
+                        font-weight="800"
+                        letter-spacing="-0.08em"
+                      >
+                        0
+                      </text>
+                      <text
+                        x="80"
+                        y="100"
+                        text-anchor="middle"
+                        fill="rgba(15,43,76,0.35)"
+                        font-family="Plus Jakarta Sans, sans-serif"
+                        font-size="11"
+                        font-weight="700"
+                        letter-spacing="0.14em"
+                      >
+                        OUT OF 100
+                      </text>
+                    </svg>
+                    <p class="score-caption">Fix the easy wins first.</p>
+                  </div>
+
+                  <div class="results-copy">
+                    <p class="results-summary">
+                      Contrast, labels, and keyboard flow are the first blockers
+                      hurting checkout clarity.
+                    </p>
+
+                    <div class="stats-row">
+                      <div class="stat-badge" data-stat>
+                        <strong>14</strong>
+                        <span>Issues found</span>
+                      </div>
+                      <div class="stat-badge" data-stat>
+                        <strong>5</strong>
+                        <span>Easy wins first</span>
+                      </div>
+                      <div class="stat-badge" data-stat>
+                        <strong>£1.3k</strong>
+                        <span>Potential monthly recovery</span>
+                      </div>
+                    </div>
+
+                    <div class="issue-grid">
+                      <article class="issue-card" data-issue>
+                        <div class="issue-top">
+                          <span class="severity-pill easy">Easy</span>
+                          <span class="issue-meta">1 field</span>
+                        </div>
+                        <h3>Delivery note field lacks a visible label.</h3>
+                        <p>Add a label tied to the field ID.</p>
+                      </article>
+
+                      <article class="issue-card" data-issue>
+                        <div class="issue-top">
+                          <span class="severity-pill medium">Medium</span>
+                          <span class="issue-meta">2 CTAs</span>
+                        </div>
+                        <h3>Amber order button misses AA contrast.</h3>
+                        <p>Darken the fill or switch the text pairing.</p>
+                      </article>
+
+                      <article class="issue-card" data-issue>
+                        <div class="issue-top">
+                          <span class="severity-pill hard">Hard</span>
+                          <span class="issue-meta">1 modal</span>
+                        </div>
+                        <h3>Bouquet picker traps keyboard users.</h3>
+                        <p>Return focus after close and support Escape.</p>
+                      </article>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <aside class="report-overlay bevel-card" id="reportOverlay">
+            <div class="bevel-inner report-overlay-inner">
+              <div class="report-head">
+                <div>
+                  <div class="panel-label">Report Preview</div>
+                  <h3>Fix kit ready for your team.</h3>
+                </div>
+                <div class="report-chip">PDF ready</div>
+              </div>
+
+              <div class="fix-kit-actions">
+                <span class="fix-badge teal">You Can Fix This ✓</span>
+                <span class="fix-badge navy">Send to Developer →</span>
+              </div>
+
+              <div class="report-list">
+                <div class="report-row">
+                  <strong>Delivery note field needs a visible label</strong>
+                  <span>CMS fix</span>
+                </div>
+                <div class="report-row">
+                  <strong>Checkout CTA needs stronger contrast</strong>
+                  <span>Dev brief</span>
+                </div>
+              </div>
+
+              <div class="report-foot">
+                <span>Plain-English fixes</span>
+                <span>Developer handoff included</span>
+              </div>
+            </div>
+          </aside>
+
+          <div class="cursor" id="cursor">
+            <svg viewBox="0 0 27 31" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M2 1.5L20.4 18.1L13.7 19.4L18.6 29.3L13.4 31L8.8 21.3L2 26.1V1.5Z"
+                fill="white"
+              />
+              <path
+                d="M2 1.5L20.4 18.1L13.7 19.4L18.6 29.3L13.4 31L8.8 21.3L2 26.1V1.5Z"
+                stroke="rgba(15,43,76,0.22)"
+              />
+            </svg>
+          </div>
+        </div>
+      </section>
+
+      <div class="fade-to-black" id="fadeToBlack"></div>
+    </main>
+
+    <script>
+      const LOOP_MS = 15000;
+      const SCORE = 42;
+      const SCORE_CIRCUMFERENCE = 2 * Math.PI * 74;
+      const URL_TEXT = "www.bloom-and-petal.co.uk";
+      const REDUCED_MOTION = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      const browser = document.getElementById("browser");
+      const browserBody = document.getElementById("browserBody");
+      const pageBar = document.getElementById("pageBar");
+      const heroLayer = document.getElementById("heroLayer");
+      const heroCopy = document.getElementById("heroCopy");
+      const heroPanel = document.getElementById("heroPanel");
+      const fieldShell = document.getElementById("fieldShell");
+      const fieldPlaceholder = document.getElementById("fieldPlaceholder");
+      const fieldValueWrap = document.getElementById("fieldValueWrap");
+      const fieldCaret = document.getElementById("fieldCaret");
+      const typedValue = document.getElementById("typedValue");
+      const ctaButton = document.getElementById("ctaButton");
+      const scanLayer = document.getElementById("scanLayer");
+      const progressFill = document.getElementById("progressFill");
+      const progressValue = document.getElementById("progressValue");
+      const scanMessages = [...document.querySelectorAll("[data-message]")];
+      const resultsLayer = document.getElementById("resultsLayer");
+      const resultsShell = document.getElementById("resultsShell");
+      const scoreProgressCircle = document.getElementById("scoreProgressCircle");
+      const scoreText = document.getElementById("scoreText");
+      const statBadges = [...document.querySelectorAll("[data-stat]")];
+      const issueCards = [...document.querySelectorAll("[data-issue]")];
+      const reportOverlay = document.getElementById("reportOverlay");
+      const cursor = document.getElementById("cursor");
+      const fadeToBlack = document.getElementById("fadeToBlack");
+
+      const MESSAGE_WINDOWS = [
+        [4620, 5600],
+        [5700, 6600],
+        [6700, 7600],
+      ];
+
+      const STAT_STARTS = [8480, 8610, 8740];
+      const ISSUE_STARTS = [9180, 9320, 9460];
+
+      const points = {
+        inputStart: { x: 90, y: 250 },
+        inputTarget: { x: 178, y: 244 },
+        inputExit: { x: 338, y: 240 },
+        buttonTarget: { x: 508, y: 242 },
+      };
+
+      function createBezierEasing(mX1, mY1, mX2, mY2) {
+        if (!(0 <= mX1 && mX1 <= 1 && 0 <= mX2 && mX2 <= 1)) {
+          throw new Error("Bezier x values must be in [0, 1] range.");
+        }
+
+        const NEWTON_ITERATIONS = 4;
+        const NEWTON_MIN_SLOPE = 0.001;
+        const SUBDIVISION_PRECISION = 0.0000001;
+        const SUBDIVISION_MAX_ITERATIONS = 10;
+        const kSplineTableSize = 11;
+        const kSampleStepSize = 1 / (kSplineTableSize - 1);
+
+        const sampleValues = new Float32Array(kSplineTableSize);
+
+        function A(aA1, aA2) {
+          return 1 - 3 * aA2 + 3 * aA1;
+        }
+
+        function B(aA1, aA2) {
+          return 3 * aA2 - 6 * aA1;
+        }
+
+        function C(aA1) {
+          return 3 * aA1;
+        }
+
+        function calcBezier(aT, aA1, aA2) {
+          return ((A(aA1, aA2) * aT + B(aA1, aA2)) * aT + C(aA1)) * aT;
+        }
+
+        function getSlope(aT, aA1, aA2) {
+          return 3 * A(aA1, aA2) * aT * aT + 2 * B(aA1, aA2) * aT + C(aA1);
+        }
+
+        function binarySubdivide(aX, aA, aB) {
+          let currentX;
+          let currentT;
+          let i = 0;
+
+          do {
+            currentT = aA + (aB - aA) / 2;
+            currentX = calcBezier(currentT, mX1, mX2) - aX;
+            if (currentX > 0) {
+              aB = currentT;
+            } else {
+              aA = currentT;
+            }
+          } while (
+            Math.abs(currentX) > SUBDIVISION_PRECISION &&
+            ++i < SUBDIVISION_MAX_ITERATIONS
+          );
+
+          return currentT;
+        }
+
+        function newtonRaphsonIterate(aX, aGuessT) {
+          for (let i = 0; i < NEWTON_ITERATIONS; ++i) {
+            const currentSlope = getSlope(aGuessT, mX1, mX2);
+            if (currentSlope === 0) return aGuessT;
+            const currentX = calcBezier(aGuessT, mX1, mX2) - aX;
+            aGuessT -= currentX / currentSlope;
+          }
+          return aGuessT;
+        }
+
+        for (let i = 0; i < kSplineTableSize; ++i) {
+          sampleValues[i] = calcBezier(i * kSampleStepSize, mX1, mX2);
+        }
+
+        function getTForX(aX) {
+          let intervalStart = 0;
+          let currentSample = 1;
+          const lastSample = kSplineTableSize - 1;
+
+          for (
+            ;
+            currentSample !== lastSample && sampleValues[currentSample] <= aX;
+            ++currentSample
+          ) {
+            intervalStart += kSampleStepSize;
+          }
+          --currentSample;
+
+          const dist =
+            (aX - sampleValues[currentSample]) /
+            (sampleValues[currentSample + 1] - sampleValues[currentSample]);
+          const guessForT = intervalStart + dist * kSampleStepSize;
+          const initialSlope = getSlope(guessForT, mX1, mX2);
+
+          if (initialSlope >= NEWTON_MIN_SLOPE) {
+            return newtonRaphsonIterate(aX, guessForT);
+          }
+          if (initialSlope === 0) {
+            return guessForT;
+          }
+          return binarySubdivide(aX, intervalStart, intervalStart + kSampleStepSize);
+        }
+
+        return function BezierEasing(x) {
+          if (mX1 === mY1 && mX2 === mY2) return x;
+          if (x === 0 || x === 1) return x;
+          return calcBezier(getTForX(x), mY1, mY2);
+        };
+      }
+
+      const easeStandard = createBezierEasing(0.32, 0.72, 0, 1);
+
+      function clamp(value, min = 0, max = 1) {
+        return Math.min(max, Math.max(min, value));
+      }
+
+      function mix(start, end, progress) {
+        return start + (end - start) * progress;
+      }
+
+      function rangeProgress(time, start, end) {
+        return clamp((time - start) / (end - start));
+      }
+
+      function easedRange(time, start, end) {
+        return easeStandard(rangeProgress(time, start, end));
+      }
+
+      function windowEnvelope(time, start, end, fade = 220) {
+        if (time <= start || time >= end) return 0;
+        const fadeIn = clamp((time - start) / fade);
+        const fadeOut = clamp((end - time) / fade);
+        return Math.min(fadeIn, fadeOut);
+      }
+
+      function lerpPoint(a, b, progress) {
+        return {
+          x: mix(a.x, b.x, progress),
+          y: mix(a.y, b.y, progress),
+        };
+      }
+
+      function setTransformState(element, progress, yStart = 16, scaleStart = 0.98) {
+        const translateY = mix(yStart, 0, progress);
+        const scale = mix(scaleStart, 1, progress);
+        element.style.opacity = progress.toFixed(3);
+        element.style.transform = `translateY(${translateY.toFixed(2)}px) scale(${scale.toFixed(4)})`;
+      }
+
+      function mulberry32(seed) {
+        return function random() {
+          let t = (seed += 0x6d2b79f5);
+          t = Math.imul(t ^ (t >>> 15), t | 1);
+          t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+          return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+        };
+      }
+
+      function buildTypingSchedule(text) {
+        const random = mulberry32(42);
+        let current = 700;
+        const schedule = [];
+
+        for (const char of text) {
+          current += 60 + random() * 60;
+          schedule.push(current);
+          if (char === "." || char === "-") {
+            current += 200;
+          }
+        }
+
+        return schedule;
+      }
+
+      const typingSchedule = buildTypingSchedule(URL_TEXT);
+
+      function typedCharactersAt(time) {
+        let count = 0;
+        while (count < typingSchedule.length && time >= typingSchedule[count]) {
+          count += 1;
+        }
+        return count;
+      }
+
+      function pointForElement(element, xRatio = 0.5, yRatio = 0.5, offsetX = 0, offsetY = 0) {
+        const box = element.getBoundingClientRect();
+        const container = browserBody.getBoundingClientRect();
+        return {
+          x: box.left - container.left + box.width * xRatio + offsetX,
+          y: box.top - container.top + box.height * yRatio + offsetY,
+        };
+      }
+
+      function measurePoints() {
+        points.inputTarget = pointForElement(fieldShell, 0.22, 0.58);
+        points.inputStart = pointForElement(fieldShell, 0.06, 0.96, -128, 82);
+        points.inputExit = pointForElement(fieldShell, 0.74, 0.54);
+        points.buttonTarget = pointForElement(ctaButton, 0.48, 0.52);
+      }
+
+      function renderAt(time) {
+        const browserIn = REDUCED_MOTION ? 1 : easedRange(time, 120, 980);
+        const introFade = REDUCED_MOTION ? 0 : 1 - easedRange(time, 120, 720);
+        const outroFade = REDUCED_MOTION ? 0 : easedRange(time, 13850, LOOP_MS);
+        const fadeAmount = REDUCED_MOTION ? 0 : Math.max(introFade, outroFade);
+
+        browser.style.opacity = browserIn.toFixed(3);
+        browser.style.transform = `translate(-50%, -50%) translateY(${mix(24, 0, browserIn).toFixed(
+          2,
+        )}px) scale(${mix(0.972, 1, browserIn).toFixed(4)})`;
+        pageBar.style.opacity = browserIn.toFixed(3);
+        pageBar.style.transform = `translateY(${mix(10, 0, browserIn).toFixed(2)}px)`;
+        fadeToBlack.style.opacity = fadeAmount.toFixed(3);
+
+        const heroCopyIn = REDUCED_MOTION ? 1 : easedRange(time, 340, 1080);
+        const heroPanelIn = REDUCED_MOTION ? 1 : easedRange(time, 470, 1220);
+        const heroOut = REDUCED_MOTION ? 0 : easedRange(time, 4620, 5400);
+        const heroOpacity = REDUCED_MOTION ? 0 : 1 - heroOut;
+        const scanPresence = REDUCED_MOTION ? 0 : easedRange(time, 4620, 5220) * (1 - easedRange(time, 7420, 7840));
+
+        heroLayer.style.opacity = heroOpacity.toFixed(3);
+        heroLayer.style.filter = `blur(${(scanPresence * 2.4).toFixed(2)}px)`;
+        heroCopy.style.opacity = (heroCopyIn * heroOpacity).toFixed(3);
+        heroCopy.style.transform = `translateY(${(
+          mix(18, 0, heroCopyIn) - mix(0, 24, heroOut)
+        ).toFixed(2)}px)`;
+        heroPanel.style.opacity = (heroPanelIn * heroOpacity).toFixed(3);
+        heroPanel.style.transform = `translateY(${(
+          mix(24, 0, heroPanelIn) - mix(0, 18, heroOut)
+        ).toFixed(2)}px)`;
+
+        const typedCount = REDUCED_MOTION ? URL_TEXT.length : typedCharactersAt(time);
+        const typedText = URL_TEXT.slice(0, typedCount);
+        typedValue.textContent = typedText;
+        fieldPlaceholder.style.display = typedCount ? "none" : "inline-flex";
+        fieldValueWrap.style.display = typedCount ? "inline-flex" : "none";
+        fieldValueWrap.style.opacity = typedCount ? "1" : "0";
+        fieldCaret.style.opacity = typedCount < URL_TEXT.length && time < 4620 ? "1" : "0";
+        fieldShell.classList.toggle(
+          "is-focused",
+          REDUCED_MOTION || (time >= 760 && time <= 4580),
+        );
+        ctaButton.classList.toggle("is-pressed", !REDUCED_MOTION && time >= 4420 && time <= 4580);
+
+        const scanIn = REDUCED_MOTION ? 0 : easedRange(time, 4620, 5220);
+        const scanOut = REDUCED_MOTION ? 1 : easedRange(time, 7420, 7840);
+        const scanOpacity = REDUCED_MOTION ? 0 : scanIn * (1 - scanOut);
+        const scanScale = mix(0.97, 1, scanIn) - scanOut * 0.02;
+        const scanY = mix(26, 0, scanIn) - mix(0, 12, scanOut);
+        scanLayer.style.opacity = scanOpacity.toFixed(3);
+        scanLayer.style.transform = `translateY(${scanY.toFixed(2)}px) scale(${scanScale.toFixed(4)})`;
+
+        const progressRatio = REDUCED_MOTION ? 1 : rangeProgress(time, 4620, 7600);
+        progressFill.style.width = `${(progressRatio * 100).toFixed(1)}%`;
+        progressValue.textContent = `${Math.round(progressRatio * 100)}%`;
+
+        scanMessages.forEach((message, index) => {
+          const opacity = REDUCED_MOTION
+            ? index === scanMessages.length - 1
+              ? 1
+              : 0
+            : windowEnvelope(time, MESSAGE_WINDOWS[index][0], MESSAGE_WINDOWS[index][1], 230);
+          message.style.opacity = opacity.toFixed(3);
+          message.style.transform = `translateY(${mix(12, 0, opacity).toFixed(2)}px)`;
+        });
+
+        const resultsIn = REDUCED_MOTION ? 1 : easedRange(time, 7720, 8440);
+        resultsLayer.style.opacity = resultsIn.toFixed(3);
+        resultsLayer.style.transform = `translateY(${mix(20, 0, resultsIn).toFixed(2)}px)`;
+
+        const ringProgress = REDUCED_MOTION ? 1 : easedRange(time, 7920, 9420);
+        const visibleScore = Math.round(SCORE * ringProgress);
+        scoreText.textContent = String(visibleScore);
+        scoreProgressCircle.style.strokeDashoffset = String(
+          SCORE_CIRCUMFERENCE * (1 - (SCORE / 100) * ringProgress),
+        );
+
+        statBadges.forEach((badge, index) => {
+          const reveal = REDUCED_MOTION ? 1 : easedRange(time, STAT_STARTS[index], STAT_STARTS[index] + 620);
+          setTransformState(badge, reveal, 12, 0.97);
+        });
+
+        issueCards.forEach((card, index) => {
+          const reveal = REDUCED_MOTION ? 1 : easedRange(time, ISSUE_STARTS[index], ISSUE_STARTS[index] + 640);
+          setTransformState(card, reveal, 14, 0.97);
+        });
+
+        const reportIn = REDUCED_MOTION ? 1 : easedRange(time, 11350, 11850);
+        reportOverlay.style.opacity = reportIn.toFixed(3);
+        reportOverlay.style.transform = `translateY(${mix(24, 0, reportIn).toFixed(2)}px) scale(${mix(
+          0.94,
+          1,
+          reportIn,
+        ).toFixed(4)}) rotate(${mix(3.5, 0, reportIn).toFixed(2)}deg)`;
+
+        resultsShell.style.transform = `scale(${(1 - reportIn * 0.018).toFixed(4)}) translateY(${(
+          reportIn * 2
+        ).toFixed(2)}px)`;
+        resultsShell.style.filter = `blur(${(reportIn * 1.1).toFixed(2)}px)`;
+
+        let cursorOpacity = 0;
+        let cursorScale = 1;
+        let cursorPoint = points.inputStart;
+
+        if (!REDUCED_MOTION && time >= 420 && time <= 900) {
+          const travel = easedRange(time, 420, 820);
+          cursorPoint = lerpPoint(points.inputStart, points.inputTarget, travel);
+          cursorOpacity = 1 - easedRange(time, 840, 900);
+          if (time >= 760 && time <= 840) {
+            cursorScale = 0.92;
+          }
+        } else if (!REDUCED_MOTION && time >= 4060 && time <= 4580) {
+          const travel = easedRange(time, 4060, 4420);
+          cursorPoint = lerpPoint(points.inputExit, points.buttonTarget, travel);
+          cursorOpacity = 1;
+          if (time >= 4420 && time <= 4580) {
+            cursorScale = 0.92;
+          }
+        }
+
+        cursor.style.opacity = cursorOpacity.toFixed(3);
+        cursor.style.transform = `translate(${cursorPoint.x.toFixed(2)}px, ${cursorPoint.y.toFixed(
+          2,
+        )}px) scale(${cursorScale.toFixed(3)})`;
+      }
+
+      let animationStart = performance.now();
+
+      function tick(now) {
+        const elapsed = (now - animationStart) % LOOP_MS;
+        renderAt(elapsed);
+        window.requestAnimationFrame(tick);
+      }
+
+      function init() {
+        measurePoints();
+
+        if (REDUCED_MOTION) {
+          renderAt(12100);
+          cursor.style.opacity = "0";
+          fadeToBlack.style.opacity = "0";
+          return;
+        }
+
+        window.requestAnimationFrame(tick);
+      }
+
+      window.addEventListener("resize", measurePoints);
+      window.addEventListener("load", measurePoints);
+
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(() => {
+          measurePoints();
+        });
+      }
+
+      init();
+    </script>
+  </body>
+</html>

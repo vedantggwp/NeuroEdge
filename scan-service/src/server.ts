@@ -5,6 +5,7 @@ import { scanUrl } from './scanner.js';
 import { translateViolations } from './translator.js';
 import { generatePdf } from './pdf/generator.js';
 import { sendReport } from './emailer.js';
+import { notifyFailure } from './notify.js';
 import { db } from './db.js';
 
 const app = Fastify({ logger: true });
@@ -16,6 +17,15 @@ await app.register(cors, { origin: true });
 await app.register(rateLimit, {
   max: 10,
   timeWindow: '1 minute',
+});
+
+const API_KEY = process.env['API_KEY'] ?? '';
+
+app.addHook('onRequest', async (request, reply) => {
+  if (request.url === '/health') return;
+  if (API_KEY && request.headers['x-api-key'] !== API_KEY) {
+    return reply.status(401).send({ error: 'Unauthorized' });
+  }
 });
 
 app.post('/api/scan', async (request, reply) => {
@@ -63,26 +73,26 @@ app.post('/api/generate-report', async (request, reply) => {
   }
 
   try {
-    // Fetch scan data
-    const { data: scanRow, error: scanError } = await db
-      .from('scans')
-      .select('url, score, violations, passed_rules, total_rules, total_violations')
-      .eq('report_id', reportId)
-      .single();
-
-    if (scanError || !scanRow) {
-      throw new Error('Scan data not found');
-    }
-
-    // Fetch report for email and industry
+    // Fetch report row first (has scan_id, email, industry)
     const { data: reportRow, error: reportError } = await db
       .from('reports')
-      .select('email, industry')
+      .select('scan_id, email, industry')
       .eq('id', reportId)
       .single();
 
     if (reportError || !reportRow) {
       throw new Error('Report record not found');
+    }
+
+    // Now fetch scan data using report's scan_id
+    const { data: scanRow, error: scanError } = await db
+      .from('scans')
+      .select('url, score, violations, passed_rules, total_rules, total_violations, cms')
+      .eq('id', reportRow.scan_id)
+      .single();
+
+    if (scanError || !scanRow) {
+      throw new Error('Scan data not found');
     }
 
     const violations: Array<{
@@ -98,6 +108,7 @@ app.post('/api/generate-report', async (request, reply) => {
       violations,
       scanRow.url,
       reportRow.industry ?? 'general',
+      scanRow.cms ?? 'unknown',
     );
 
     // Generate PDF
@@ -129,6 +140,8 @@ app.post('/api/generate-report', async (request, reply) => {
 
     // Mark report as failed — do not swallow the DB error here
     await db.from('reports').update({ status: 'failed', error_message: message }).eq('id', reportId);
+
+    await notifyFailure(reportId, message);
 
     return reply.status(500).send({ error: message });
   }

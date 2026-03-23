@@ -1,7 +1,6 @@
 "use client";
 
 import { use, useState, useEffect, useCallback } from "react";
-import { motion, useReducedMotion } from "framer-motion";
 import { getSupabase } from "@/lib/supabase";
 import { ScanProgress } from "@/components/ScanProgress";
 import { ScoreRing } from "@/components/ScoreRing";
@@ -39,7 +38,6 @@ export default function ScanResultsPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = use(params);
-  const prefersReducedMotion = useReducedMotion();
 
   const [state, setState] = useState<LoadingState>("loading");
   const [scan, setScan] = useState<ScanData | null>(null);
@@ -105,7 +103,7 @@ export default function ScanResultsPage({
   if (state === "error" || !scan) {
     return (
       <main className="flex min-h-[80vh] flex-col items-center justify-center gap-4 px-[var(--section-x)] pt-20">
-        <h1 className="font-serif text-2xl text-text-primary">
+        <h1 className="font-sans text-2xl text-text-primary">
           Something went wrong
         </h1>
         <p className="max-w-md text-center text-text-secondary">{errorMsg}</p>
@@ -120,13 +118,8 @@ export default function ScanResultsPage({
   return (
     <main className="mx-auto max-w-3xl px-[var(--section-x)] pb-20 pt-24">
       {/* Header */}
-      <motion.div
-        className="mb-10 text-center"
-        initial={prefersReducedMotion ? {} : { opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.5 }}
-      >
-        <h1 className="font-serif text-3xl text-text-primary sm:text-4xl">
+      <div className="animate-fade-up mb-10 text-center">
+        <h1 className="font-sans text-3xl text-text-primary sm:text-4xl">
           Scan Results
         </h1>
         <p className="mt-2 text-text-secondary">
@@ -139,21 +132,12 @@ export default function ScanResultsPage({
             {scan.url}
           </a>
         </p>
-      </motion.div>
+      </div>
 
       {/* Score ring */}
-      <motion.div
-        className="mb-12 flex justify-center"
-        initial={prefersReducedMotion ? {} : { opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={
-          prefersReducedMotion
-            ? { duration: 0 }
-            : { delay: 0.2, duration: 0.6, type: "spring", stiffness: 120 }
-        }
-      >
+      <div className="animate-fade-up mb-12 flex justify-center" style={{ animationDelay: "200ms" }}>
         <ScoreRing score={scan.score} />
-      </motion.div>
+      </div>
 
       {/* Summary stats */}
       <div className="mb-10 grid grid-cols-2 gap-4 sm:grid-cols-3">
@@ -175,17 +159,15 @@ export default function ScanResultsPage({
       </div>
 
       {/* Revenue estimate section */}
-      <motion.section
+      <section
         aria-labelledby="revenue-heading"
-        className="space-y-8"
-        initial={prefersReducedMotion ? {} : { opacity: 0, y: 24 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={prefersReducedMotion ? { duration: 0 } : { delay: 0.4, duration: 0.5 }}
+        className="animate-fade-up space-y-8"
+        style={{ animationDelay: "400ms" }}
       >
         <div>
           <h2
             id="revenue-heading"
-            className="font-serif text-2xl text-text-primary sm:text-3xl"
+            className="font-sans text-2xl text-text-primary sm:text-3xl"
           >
             How much could you be making?
           </h2>
@@ -216,18 +198,16 @@ export default function ScanResultsPage({
             />
           )}
         </Card>
-      </motion.section>
+      </section>
 
       {/* Report CTA */}
-      <motion.section
+      <section
         aria-labelledby="report-heading"
-        className="mt-16"
-        initial={prefersReducedMotion ? {} : { opacity: 0, y: 24 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={prefersReducedMotion ? { duration: 0 } : { delay: 0.6, duration: 0.5 }}
+        className="animate-fade-up mt-16"
+        style={{ animationDelay: "600ms" }}
       >
         <ReportCTA scanId={id} />
-      </motion.section>
+      </section>
     </main>
   );
 }

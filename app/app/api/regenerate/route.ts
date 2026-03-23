@@ -61,7 +61,10 @@ export async function POST(req: NextRequest) {
   try {
     const res = await fetch(`${scanServiceUrl}/api/generate-report`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "X-API-Key": process.env.SCAN_SERVICE_API_KEY ?? "",
+      },
       body: JSON.stringify({ reportId, scanId }),
     });
 

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import { Progress } from "@/components/ui/Progress";
 
 const PHASES = [
@@ -43,29 +42,15 @@ export function ScanProgress() {
       aria-label="Scanning in progress"
     >
       {/* Spinner */}
-      <motion.div
-        className="h-12 w-12 rounded-full border-4 border-accent/30 border-t-accent"
-        animate={{ rotate: 360 }}
-        transition={{
-          repeat: Infinity,
-          duration: 1,
-          ease: "linear",
-        }}
-      />
+      <div className="animate-spin-continuous h-12 w-12 rounded-full border-4 border-accent/30 border-t-accent" />
 
       {/* Phase label */}
-      <AnimatePresence mode="wait">
-        <motion.p
-          key={currentPhase}
-          className="text-lg font-medium text-text-primary"
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -8 }}
-          transition={{ duration: 0.3 }}
-        >
-          {currentPhase}
-        </motion.p>
-      </AnimatePresence>
+      <p
+        key={currentPhase}
+        className="animate-fade-up text-lg font-medium text-text-primary"
+      >
+        {currentPhase}
+      </p>
 
       {/* Progress bar */}
       <Progress value={progress} className="w-full" />

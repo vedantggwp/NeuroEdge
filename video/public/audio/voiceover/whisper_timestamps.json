@@ -1,0 +1,1816 @@
+{
+  "S01": [
+    {
+      "word": "This",
+      "start": 0.0,
+      "end": 0.78
+    },
+    {
+      "word": "is",
+      "start": 0.78,
+      "end": 0.92
+    },
+    {
+      "word": "Sarah.",
+      "start": 0.92,
+      "end": 1.22
+    },
+    {
+      "word": "She's",
+      "start": 1.86,
+      "end": 2.16
+    },
+    {
+      "word": "34.",
+      "start": 2.16,
+      "end": 2.58
+    },
+    {
+      "word": "She",
+      "start": 3.04,
+      "end": 3.18
+    },
+    {
+      "word": "lives",
+      "start": 3.18,
+      "end": 3.42
+    },
+    {
+      "word": "in",
+      "start": 3.42,
+      "end": 3.62
+    },
+    {
+      "word": "Liverpool",
+      "start": 3.62,
+      "end": 3.88
+    },
+    {
+      "word": "and",
+      "start": 3.88,
+      "end": 4.42
+    },
+    {
+      "word": "she's",
+      "start": 4.42,
+      "end": 4.64
+    },
+    {
+      "word": "partially",
+      "start": 4.64,
+      "end": 5.0
+    },
+    {
+      "word": "sighted.",
+      "start": 5.0,
+      "end": 5.52
+    },
+    {
+      "word": "This",
+      "start": 5.96,
+      "end": 6.14
+    },
+    {
+      "word": "morning,",
+      "start": 6.14,
+      "end": 6.5
+    },
+    {
+      "word": "she",
+      "start": 6.72,
+      "end": 6.88
+    },
+    {
+      "word": "wants",
+      "start": 6.88,
+      "end": 7.08
+    },
+    {
+      "word": "to",
+      "start": 7.08,
+      "end": 7.32
+    },
+    {
+      "word": "order",
+      "start": 7.32,
+      "end": 7.54
+    },
+    {
+      "word": "birdie",
+      "start": 7.54,
+      "end": 8.02
+    },
+    {
+      "word": "flowers",
+      "start": 8.02,
+      "end": 8.24
+    },
+    {
+      "word": "for",
+      "start": 8.24,
+      "end": 8.54
+    },
+    {
+      "word": "her",
+      "start": 8.54,
+      "end": 8.7
+    },
+    {
+      "word": "mum.",
+      "start": 8.7,
+      "end": 8.86
+    },
+    {
+      "word": "She",
+      "start": 9.52,
+      "end": 9.72
+    },
+    {
+      "word": "finds",
+      "start": 9.72,
+      "end": 9.98
+    },
+    {
+      "word": "a",
+      "start": 9.98,
+      "end": 10.14
+    },
+    {
+      "word": "local",
+      "start": 10.14,
+      "end": 10.38
+    },
+    {
+      "word": "florist",
+      "start": 10.38,
+      "end": 10.88
+    },
+    {
+      "word": "online,",
+      "start": 10.88,
+      "end": 11.28
+    },
+    {
+      "word": "blue",
+      "start": 11.62,
+      "end": 11.72
+    },
+    {
+      "word": "man",
+      "start": 11.72,
+      "end": 11.9
+    },
+    {
+      "word": "petal.",
+      "start": 11.9,
+      "end": 12.26
+    },
+    {
+      "word": "Beautiful",
+      "start": 12.78,
+      "end": 13.06
+    },
+    {
+      "word": "website.",
+      "start": 13.06,
+      "end": 13.46
+    },
+    {
+      "word": "But",
+      "start": 14.2,
+      "end": 14.42
+    },
+    {
+      "word": "when",
+      "start": 14.42,
+      "end": 14.64
+    },
+    {
+      "word": "her",
+      "start": 14.64,
+      "end": 14.9
+    },
+    {
+      "word": "screen",
+      "start": 14.9,
+      "end": 15.22
+    },
+    {
+      "word": "reader",
+      "start": 15.22,
+      "end": 15.5
+    },
+    {
+      "word": "hits",
+      "start": 15.5,
+      "end": 15.8
+    },
+    {
+      "word": "the",
+      "start": 15.8,
+      "end": 16.0
+    },
+    {
+      "word": "checkout",
+      "start": 16.0,
+      "end": 16.2
+    },
+    {
+      "word": "button,",
+      "start": 16.2,
+      "end": 16.64
+    },
+    {
+      "word": "nothing",
+      "start": 17.0,
+      "end": 17.26
+    },
+    {
+      "word": "happens.",
+      "start": 17.26,
+      "end": 17.72
+    },
+    {
+      "word": "No",
+      "start": 18.08,
+      "end": 18.18
+    },
+    {
+      "word": "label,",
+      "start": 18.18,
+      "end": 18.52
+    },
+    {
+      "word": "no",
+      "start": 18.84,
+      "end": 18.96
+    },
+    {
+      "word": "focus.",
+      "start": 18.96,
+      "end": 19.34
+    },
+    {
+      "word": "The",
+      "start": 19.78,
+      "end": 19.8
+    },
+    {
+      "word": "page",
+      "start": 19.8,
+      "end": 20.06
+    },
+    {
+      "word": "just",
+      "start": 20.06,
+      "end": 20.24
+    },
+    {
+      "word": "stops.",
+      "start": 20.24,
+      "end": 20.58
+    },
+    {
+      "word": "Sarah",
+      "start": 21.42,
+      "end": 21.76
+    },
+    {
+      "word": "tries",
+      "start": 21.76,
+      "end": 22.18
+    },
+    {
+      "word": "three",
+      "start": 22.18,
+      "end": 22.44
+    },
+    {
+      "word": "more",
+      "start": 22.44,
+      "end": 22.66
+    },
+    {
+      "word": "times.",
+      "start": 22.66,
+      "end": 22.94
+    },
+    {
+      "word": "Then",
+      "start": 23.46,
+      "end": 23.54
+    },
+    {
+      "word": "she",
+      "start": 23.54,
+      "end": 23.7
+    },
+    {
+      "word": "closes",
+      "start": 23.7,
+      "end": 23.98
+    },
+    {
+      "word": "the",
+      "start": 23.98,
+      "end": 24.2
+    },
+    {
+      "word": "tab.",
+      "start": 24.2,
+      "end": 24.4
+    }
+  ],
+  "S02": [
+    {
+      "word": "Sarah",
+      "start": 0.0,
+      "end": 0.74
+    },
+    {
+      "word": "isn't",
+      "start": 0.74,
+      "end": 1.18
+    },
+    {
+      "word": "alone.",
+      "start": 1.18,
+      "end": 1.4
+    },
+    {
+      "word": "94",
+      "start": 1.92,
+      "end": 2.34
+    },
+    {
+      "word": ".8",
+      "start": 2.34,
+      "end": 3.02
+    },
+    {
+      "word": "%",
+      "start": 3.02,
+      "end": 3.34
+    },
+    {
+      "word": "of",
+      "start": 3.34,
+      "end": 3.56
+    },
+    {
+      "word": "the",
+      "start": 3.56,
+      "end": 3.68
+    },
+    {
+      "word": "top",
+      "start": 3.68,
+      "end": 3.9
+    },
+    {
+      "word": "million",
+      "start": 3.9,
+      "end": 4.26
+    },
+    {
+      "word": "websites",
+      "start": 4.26,
+      "end": 4.78
+    },
+    {
+      "word": "have",
+      "start": 4.78,
+      "end": 5.1
+    },
+    {
+      "word": "accessibility",
+      "start": 5.1,
+      "end": 5.66
+    },
+    {
+      "word": "failures.",
+      "start": 5.66,
+      "end": 6.18
+    },
+    {
+      "word": "That's",
+      "start": 6.88,
+      "end": 7.28
+    },
+    {
+      "word": "51",
+      "start": 7.28,
+      "end": 7.82
+    },
+    {
+      "word": "errors",
+      "start": 7.82,
+      "end": 8.32
+    },
+    {
+      "word": "per",
+      "start": 8.32,
+      "end": 8.64
+    },
+    {
+      "word": "homepage.",
+      "start": 8.64,
+      "end": 9.1
+    },
+    {
+      "word": "And",
+      "start": 9.76,
+      "end": 9.98
+    },
+    {
+      "word": "in",
+      "start": 9.98,
+      "end": 10.1
+    },
+    {
+      "word": "the",
+      "start": 10.1,
+      "end": 10.2
+    },
+    {
+      "word": "UK,",
+      "start": 10.2,
+      "end": 10.48
+    },
+    {
+      "word": "24",
+      "start": 10.7,
+      "end": 11.04
+    },
+    {
+      "word": "%",
+      "start": 11.04,
+      "end": 11.4
+    },
+    {
+      "word": "of",
+      "start": 11.4,
+      "end": 11.6
+    },
+    {
+      "word": "the",
+      "start": 11.6,
+      "end": 11.7
+    },
+    {
+      "word": "population,",
+      "start": 11.7,
+      "end": 12.18
+    },
+    {
+      "word": "16",
+      "start": 12.56,
+      "end": 12.92
+    },
+    {
+      "word": "million",
+      "start": 12.92,
+      "end": 13.38
+    },
+    {
+      "word": "people,",
+      "start": 13.38,
+      "end": 13.82
+    },
+    {
+      "word": "are",
+      "start": 14.24,
+      "end": 14.48
+    },
+    {
+      "word": "now",
+      "start": 14.48,
+      "end": 14.58
+    },
+    {
+      "word": "disabled.",
+      "start": 14.58,
+      "end": 15.08
+    },
+    {
+      "word": "Most",
+      "start": 15.76,
+      "end": 16.02
+    },
+    {
+      "word": "businesses",
+      "start": 16.02,
+      "end": 16.4
+    },
+    {
+      "word": "have",
+      "start": 16.4,
+      "end": 16.86
+    },
+    {
+      "word": "no",
+      "start": 16.86,
+      "end": 17.1
+    },
+    {
+      "word": "idea",
+      "start": 17.1,
+      "end": 17.46
+    },
+    {
+      "word": "their",
+      "start": 17.46,
+      "end": 17.74
+    },
+    {
+      "word": "websites",
+      "start": 17.74,
+      "end": 18.1
+    },
+    {
+      "word": "are",
+      "start": 18.1,
+      "end": 18.38
+    },
+    {
+      "word": "shutting",
+      "start": 18.38,
+      "end": 18.58
+    },
+    {
+      "word": "them",
+      "start": 18.58,
+      "end": 18.8
+    },
+    {
+      "word": "out.",
+      "start": 18.8,
+      "end": 19.02
+    }
+  ],
+  "S03": [
+    {
+      "word": "Those",
+      "start": 1.36,
+      "end": 1.88
+    },
+    {
+      "word": "16",
+      "start": 1.88,
+      "end": 2.3
+    },
+    {
+      "word": "million",
+      "start": 2.3,
+      "end": 2.6
+    },
+    {
+      "word": "people",
+      "start": 2.6,
+      "end": 3.0
+    },
+    {
+      "word": "control",
+      "start": 3.0,
+      "end": 3.52
+    },
+    {
+      "word": "274",
+      "start": 3.52,
+      "end": 4.34
+    },
+    {
+      "word": "billion",
+      "start": 4.34,
+      "end": 4.68
+    },
+    {
+      "word": "pounds",
+      "start": 4.68,
+      "end": 5.08
+    },
+    {
+      "word": "a",
+      "start": 5.08,
+      "end": 5.32
+    },
+    {
+      "word": "year",
+      "start": 5.32,
+      "end": 5.5
+    },
+    {
+      "word": "in",
+      "start": 5.5,
+      "end": 5.62
+    },
+    {
+      "word": "spending.",
+      "start": 5.62,
+      "end": 5.94
+    },
+    {
+      "word": "7",
+      "start": 6.42,
+      "end": 6.64
+    },
+    {
+      "word": "in",
+      "start": 6.64,
+      "end": 6.84
+    },
+    {
+      "word": "10",
+      "start": 6.84,
+      "end": 7.08
+    },
+    {
+      "word": "of",
+      "start": 7.08,
+      "end": 7.28
+    },
+    {
+      "word": "them",
+      "start": 7.28,
+      "end": 7.46
+    },
+    {
+      "word": "click",
+      "start": 7.46,
+      "end": 7.7
+    },
+    {
+      "word": "away",
+      "start": 7.7,
+      "end": 7.98
+    },
+    {
+      "word": "from",
+      "start": 7.98,
+      "end": 8.2
+    },
+    {
+      "word": "sites",
+      "start": 8.2,
+      "end": 8.52
+    },
+    {
+      "word": "they",
+      "start": 8.52,
+      "end": 8.78
+    },
+    {
+      "word": "can't",
+      "start": 8.78,
+      "end": 9.04
+    },
+    {
+      "word": "use.",
+      "start": 9.04,
+      "end": 9.3
+    },
+    {
+      "word": "And",
+      "start": 9.7,
+      "end": 9.86
+    },
+    {
+      "word": "here's",
+      "start": 9.86,
+      "end": 10.1
+    },
+    {
+      "word": "what",
+      "start": 10.1,
+      "end": 10.26
+    },
+    {
+      "word": "most",
+      "start": 10.26,
+      "end": 10.5
+    },
+    {
+      "word": "business",
+      "start": 10.5,
+      "end": 10.74
+    },
+    {
+      "word": "owners",
+      "start": 10.74,
+      "end": 11.08
+    },
+    {
+      "word": "don't",
+      "start": 11.08,
+      "end": 11.4
+    },
+    {
+      "word": "realise.",
+      "start": 11.4,
+      "end": 11.72
+    },
+    {
+      "word": "This",
+      "start": 12.22,
+      "end": 12.38
+    },
+    {
+      "word": "isn't",
+      "start": 12.38,
+      "end": 12.62
+    },
+    {
+      "word": "optional.",
+      "start": 12.62,
+      "end": 12.92
+    },
+    {
+      "word": "The",
+      "start": 13.52,
+      "end": 13.56
+    },
+    {
+      "word": "Equality",
+      "start": 13.56,
+      "end": 13.94
+    },
+    {
+      "word": "Act",
+      "start": 13.94,
+      "end": 14.32
+    },
+    {
+      "word": "210",
+      "start": 14.32,
+      "end": 14.54
+    },
+    {
+      "word": "makes",
+      "start": 14.54,
+      "end": 15.04
+    },
+    {
+      "word": "it",
+      "start": 15.04,
+      "end": 15.22
+    },
+    {
+      "word": "a",
+      "start": 15.22,
+      "end": 15.32
+    },
+    {
+      "word": "legal",
+      "start": 15.32,
+      "end": 15.56
+    },
+    {
+      "word": "obligation.",
+      "start": 15.56,
+      "end": 16.08
+    },
+    {
+      "word": "The",
+      "start": 16.7,
+      "end": 16.78
+    },
+    {
+      "word": "European",
+      "start": 16.78,
+      "end": 17.14
+    },
+    {
+      "word": "Accessibility",
+      "start": 17.14,
+      "end": 17.86
+    },
+    {
+      "word": "Act",
+      "start": 17.86,
+      "end": 18.24
+    },
+    {
+      "word": "is",
+      "start": 18.24,
+      "end": 18.44
+    },
+    {
+      "word": "now",
+      "start": 18.44,
+      "end": 18.64
+    },
+    {
+      "word": "in",
+      "start": 18.64,
+      "end": 18.78
+    },
+    {
+      "word": "force.",
+      "start": 18.78,
+      "end": 19.04
+    },
+    {
+      "word": "This",
+      "start": 19.44,
+      "end": 19.54
+    },
+    {
+      "word": "isn't",
+      "start": 19.54,
+      "end": 19.8
+    },
+    {
+      "word": "coming,",
+      "start": 19.8,
+      "end": 20.02
+    },
+    {
+      "word": "it's",
+      "start": 20.34,
+      "end": 20.46
+    },
+    {
+      "word": "here.",
+      "start": 20.46,
+      "end": 20.66
+    }
+  ],
+  "S06": [
+    {
+      "word": "We",
+      "start": 0.0,
+      "end": 0.24
+    },
+    {
+      "word": "build",
+      "start": 0.24,
+      "end": 0.54
+    },
+    {
+      "word": "this",
+      "start": 0.54,
+      "end": 0.76
+    },
+    {
+      "word": "for",
+      "start": 0.76,
+      "end": 1.02
+    },
+    {
+      "word": "UK",
+      "start": 1.02,
+      "end": 1.36
+    },
+    {
+      "word": "SMEs,",
+      "start": 1.36,
+      "end": 2.0
+    },
+    {
+      "word": "5",
+      "start": 2.16,
+      "end": 2.28
+    },
+    {
+      "word": "to",
+      "start": 2.28,
+      "end": 2.44
+    },
+    {
+      "word": "50",
+      "start": 2.44,
+      "end": 2.72
+    },
+    {
+      "word": "employees,",
+      "start": 2.72,
+      "end": 3.2
+    },
+    {
+      "word": "businesses",
+      "start": 3.54,
+      "end": 3.78
+    },
+    {
+      "word": "that",
+      "start": 3.78,
+      "end": 4.16
+    },
+    {
+      "word": "have",
+      "start": 4.16,
+      "end": 4.4
+    },
+    {
+      "word": "never",
+      "start": 4.4,
+      "end": 4.64
+    },
+    {
+      "word": "heard",
+      "start": 4.64,
+      "end": 4.94
+    },
+    {
+      "word": "of",
+      "start": 4.94,
+      "end": 5.04
+    },
+    {
+      "word": "WCAG.",
+      "start": 5.04,
+      "end": 5.84
+    },
+    {
+      "word": "A",
+      "start": 6.3,
+      "end": 6.44
+    },
+    {
+      "word": "free",
+      "start": 6.44,
+      "end": 6.64
+    },
+    {
+      "word": "scan",
+      "start": 6.64,
+      "end": 6.94
+    },
+    {
+      "word": "gives",
+      "start": 6.94,
+      "end": 7.26
+    },
+    {
+      "word": "them",
+      "start": 7.26,
+      "end": 7.5
+    },
+    {
+      "word": "their",
+      "start": 7.5,
+      "end": 7.66
+    },
+    {
+      "word": "score",
+      "start": 7.66,
+      "end": 7.94
+    },
+    {
+      "word": "and",
+      "start": 7.94,
+      "end": 8.36
+    },
+    {
+      "word": "top",
+      "start": 8.36,
+      "end": 8.58
+    },
+    {
+      "word": "3",
+      "start": 8.58,
+      "end": 8.82
+    },
+    {
+      "word": "issues.",
+      "start": 8.82,
+      "end": 9.18
+    },
+    {
+      "word": "Full",
+      "start": 9.64,
+      "end": 9.74
+    },
+    {
+      "word": "report,",
+      "start": 9.74,
+      "end": 10.12
+    },
+    {
+      "word": "29",
+      "start": 10.32,
+      "end": 10.72
+    },
+    {
+      "word": "to",
+      "start": 10.72,
+      "end": 10.94
+    },
+    {
+      "word": "49",
+      "start": 10.94,
+      "end": 11.4
+    },
+    {
+      "word": "pounds.",
+      "start": 11.4,
+      "end": 11.76
+    },
+    {
+      "word": "Video",
+      "start": 12.1,
+      "end": 12.28
+    },
+    {
+      "word": "walkthrough,",
+      "start": 12.28,
+      "end": 12.76
+    },
+    {
+      "word": "99",
+      "start": 12.94,
+      "end": 13.28
+    },
+    {
+      "word": "pounds.",
+      "start": 13.28,
+      "end": 13.66
+    },
+    {
+      "word": "And",
+      "start": 14.0,
+      "end": 14.06
+    },
+    {
+      "word": "our",
+      "start": 14.06,
+      "end": 14.2
+    },
+    {
+      "word": "monitoring",
+      "start": 14.2,
+      "end": 14.58
+    },
+    {
+      "word": "agent",
+      "start": 14.58,
+      "end": 14.94
+    },
+    {
+      "word": "checks",
+      "start": 14.94,
+      "end": 15.38
+    },
+    {
+      "word": "weekly",
+      "start": 15.38,
+      "end": 15.74
+    },
+    {
+      "word": "for",
+      "start": 15.74,
+      "end": 16.08
+    },
+    {
+      "word": "19",
+      "start": 16.08,
+      "end": 16.36
+    },
+    {
+      "word": "pounds",
+      "start": 16.36,
+      "end": 16.72
+    },
+    {
+      "word": "a",
+      "start": 16.72,
+      "end": 16.88
+    },
+    {
+      "word": "month.",
+      "start": 16.88,
+      "end": 17.12
+    },
+    {
+      "word": "Reckering",
+      "start": 17.44,
+      "end": 17.78
+    },
+    {
+      "word": "revenue,",
+      "start": 17.78,
+      "end": 18.22
+    },
+    {
+      "word": "100",
+      "start": 18.7,
+      "end": 18.96
+    },
+    {
+      "word": "subscribers",
+      "start": 18.96,
+      "end": 19.5
+    },
+    {
+      "word": "gets",
+      "start": 19.5,
+      "end": 19.94
+    },
+    {
+      "word": "us",
+      "start": 19.94,
+      "end": 20.12
+    },
+    {
+      "word": "the",
+      "start": 20.12,
+      "end": 20.24
+    },
+    {
+      "word": "22",
+      "start": 20.24,
+      "end": 20.58
+    },
+    {
+      "word": ",800",
+      "start": 20.58,
+      "end": 21.2
+    },
+    {
+      "word": "pounds",
+      "start": 21.2,
+      "end": 21.6
+    },
+    {
+      "word": "ARR.",
+      "start": 21.6,
+      "end": 22.16
+    }
+  ],
+  "S08": [
+    {
+      "word": "I",
+      "start": 0.0,
+      "end": 0.22
+    },
+    {
+      "word": "am",
+      "start": 0.22,
+      "end": 0.28
+    },
+    {
+      "word": "Shashwati,",
+      "start": 0.28,
+      "end": 0.82
+    },
+    {
+      "word": "Master's",
+      "start": 1.02,
+      "end": 1.56
+    },
+    {
+      "word": "Advanced",
+      "start": 1.56,
+      "end": 1.84
+    },
+    {
+      "word": "Marketing.",
+      "start": 1.84,
+      "end": 2.34
+    },
+    {
+      "word": "I",
+      "start": 2.64,
+      "end": 2.72
+    },
+    {
+      "word": "design",
+      "start": 2.72,
+      "end": 2.94
+    },
+    {
+      "word": "the",
+      "start": 2.94,
+      "end": 3.22
+    },
+    {
+      "word": "audit",
+      "start": 3.22,
+      "end": 3.46
+    },
+    {
+      "word": "methodology,",
+      "start": 3.46,
+      "end": 4.2
+    },
+    {
+      "word": "the",
+      "start": 4.44,
+      "end": 4.52
+    },
+    {
+      "word": "reports",
+      "start": 4.52,
+      "end": 4.9
+    },
+    {
+      "word": "and",
+      "start": 4.9,
+      "end": 5.24
+    },
+    {
+      "word": "the",
+      "start": 5.24,
+      "end": 5.38
+    },
+    {
+      "word": "go",
+      "start": 5.38,
+      "end": 5.48
+    },
+    {
+      "word": "-to",
+      "start": 5.48,
+      "end": 5.62
+    },
+    {
+      "word": "market.",
+      "start": 5.62,
+      "end": 5.92
+    }
+  ],
+  "S09": [
+    {
+      "word": "We",
+      "start": 0.0,
+      "end": 0.3
+    },
+    {
+      "word": "are",
+      "start": 0.3,
+      "end": 0.4
+    },
+    {
+      "word": "asking",
+      "start": 0.4,
+      "end": 0.7
+    },
+    {
+      "word": "for",
+      "start": 0.7,
+      "end": 0.96
+    },
+    {
+      "word": "5000",
+      "start": 0.96,
+      "end": 1.4
+    },
+    {
+      "word": "pounds,",
+      "start": 1.4,
+      "end": 1.7
+    },
+    {
+      "word": "500",
+      "start": 2.1,
+      "end": 2.46
+    },
+    {
+      "word": "for",
+      "start": 2.46,
+      "end": 2.78
+    },
+    {
+      "word": "user",
+      "start": 2.78,
+      "end": 3.0
+    },
+    {
+      "word": "research",
+      "start": 3.0,
+      "end": 3.5
+    },
+    {
+      "word": "with",
+      "start": 3.5,
+      "end": 3.64
+    },
+    {
+      "word": "disabled",
+      "start": 3.64,
+      "end": 3.98
+    },
+    {
+      "word": "testers,",
+      "start": 3.98,
+      "end": 4.62
+    },
+    {
+      "word": "1000",
+      "start": 4.82,
+      "end": 5.04
+    },
+    {
+      "word": "for",
+      "start": 5.04,
+      "end": 5.3
+    },
+    {
+      "word": "marketing,",
+      "start": 5.3,
+      "end": 5.64
+    },
+    {
+      "word": "400",
+      "start": 6.04,
+      "end": 6.38
+    },
+    {
+      "word": "for",
+      "start": 6.38,
+      "end": 6.62
+    },
+    {
+      "word": "AI",
+      "start": 6.62,
+      "end": 6.84
+    },
+    {
+      "word": "infrastructure",
+      "start": 6.84,
+      "end": 7.28
+    },
+    {
+      "word": "and",
+      "start": 7.28,
+      "end": 7.94
+    },
+    {
+      "word": "the",
+      "start": 7.94,
+      "end": 8.06
+    },
+    {
+      "word": "rest",
+      "start": 8.06,
+      "end": 8.24
+    },
+    {
+      "word": "for",
+      "start": 8.24,
+      "end": 8.48
+    },
+    {
+      "word": "design,",
+      "start": 8.48,
+      "end": 8.9
+    },
+    {
+      "word": "legal",
+      "start": 9.14,
+      "end": 9.38
+    },
+    {
+      "word": "and",
+      "start": 9.38,
+      "end": 9.66
+    },
+    {
+      "word": "workshops.",
+      "start": 9.66,
+      "end": 10.06
+    },
+    {
+      "word": "April",
+      "start": 10.7,
+      "end": 10.96
+    },
+    {
+      "word": "we",
+      "start": 10.96,
+      "end": 11.26
+    },
+    {
+      "word": "built",
+      "start": 11.26,
+      "end": 11.62
+    },
+    {
+      "word": "the",
+      "start": 11.62,
+      "end": 11.74
+    },
+    {
+      "word": "MVP,",
+      "start": 11.74,
+      "end": 12.04
+    },
+    {
+      "word": "May",
+      "start": 12.46,
+      "end": 12.58
+    },
+    {
+      "word": "pilot",
+      "start": 12.58,
+      "end": 12.98
+    },
+    {
+      "word": "with",
+      "start": 12.98,
+      "end": 13.2
+    },
+    {
+      "word": "20",
+      "start": 13.2,
+      "end": 13.5
+    },
+    {
+      "word": "Liverpool",
+      "start": 13.5,
+      "end": 13.8
+    },
+    {
+      "word": "SMEs",
+      "start": 13.8,
+      "end": 14.46
+    },
+    {
+      "word": "by",
+      "start": 14.46,
+      "end": 14.66
+    },
+    {
+      "word": "September,",
+      "start": 14.66,
+      "end": 14.96
+    },
+    {
+      "word": "100",
+      "start": 15.4,
+      "end": 15.58
+    },
+    {
+      "word": "customers,",
+      "start": 15.58,
+      "end": 16.0
+    },
+    {
+      "word": "30",
+      "start": 16.56,
+      "end": 16.82
+    },
+    {
+      "word": "monitoring",
+      "start": 16.82,
+      "end": 17.16
+    },
+    {
+      "word": "subscribers",
+      "start": 17.16,
+      "end": 17.56
+    },
+    {
+      "word": "and",
+      "start": 17.56,
+      "end": 18.04
+    },
+    {
+      "word": "over",
+      "start": 18.04,
+      "end": 18.24
+    },
+    {
+      "word": "5000",
+      "start": 18.24,
+      "end": 18.76
+    },
+    {
+      "word": "pounds",
+      "start": 18.76,
+      "end": 19.04
+    },
+    {
+      "word": "recovered.",
+      "start": 19.04,
+      "end": 19.42
+    },
+    {
+      "word": "At",
+      "start": 19.94,
+      "end": 20.08
+    },
+    {
+      "word": "100",
+      "start": 20.08,
+      "end": 20.4
+    },
+    {
+      "word": "subscribers",
+      "start": 20.4,
+      "end": 20.92
+    },
+    {
+      "word": "that's",
+      "start": 20.92,
+      "end": 21.56
+    },
+    {
+      "word": "22",
+      "start": 21.56,
+      "end": 21.9
+    },
+    {
+      "word": "800",
+      "start": 21.9,
+      "end": 22.54
+    },
+    {
+      "word": "pounds",
+      "start": 22.54,
+      "end": 23.0
+    },
+    {
+      "word": "ARR.",
+      "start": 23.0,
+      "end": 23.6
+    }
+  ],
+  "S10": [
+    {
+      "word": "3",
+      "start": 1.4,
+      "end": 1.98
+    },
+    {
+      "word": "weeks",
+      "start": 1.98,
+      "end": 2.28
+    },
+    {
+      "word": "later,",
+      "start": 2.28,
+      "end": 2.68
+    },
+    {
+      "word": "the",
+      "start": 2.92,
+      "end": 3.02
+    },
+    {
+      "word": "florist",
+      "start": 3.02,
+      "end": 3.46
+    },
+    {
+      "word": "at",
+      "start": 3.46,
+      "end": 3.6
+    },
+    {
+      "word": "Blumen",
+      "start": 3.6,
+      "end": 3.86
+    },
+    {
+      "word": "Petal",
+      "start": 3.86,
+      "end": 4.3
+    },
+    {
+      "word": "runs",
+      "start": 4.3,
+      "end": 4.56
+    },
+    {
+      "word": "a",
+      "start": 4.56,
+      "end": 4.76
+    },
+    {
+      "word": "Euro",
+      "start": 4.76,
+      "end": 4.98
+    },
+    {
+      "word": "-H",
+      "start": 4.98,
+      "end": 5.24
+    },
+    {
+      "word": "audit.",
+      "start": 5.24,
+      "end": 5.58
+    },
+    {
+      "word": "Scores",
+      "start": 6.14,
+      "end": 6.56
+    },
+    {
+      "word": "34",
+      "start": 6.56,
+      "end": 7.2
+    },
+    {
+      "word": "out",
+      "start": 7.2,
+      "end": 7.42
+    },
+    {
+      "word": "of",
+      "start": 7.42,
+      "end": 7.56
+    },
+    {
+      "word": "100",
+      "start": 7.56,
+      "end": 7.86
+    },
+    {
+      "word": "fix",
+      "start": 7.86,
+      "end": 8.34
+    },
+    {
+      "word": "23",
+      "start": 8.34,
+      "end": 8.82
+    },
+    {
+      "word": "issues",
+      "start": 8.82,
+      "end": 9.42
+    },
+    {
+      "word": "including",
+      "start": 9.42,
+      "end": 9.72
+    },
+    {
+      "word": "that",
+      "start": 9.72,
+      "end": 10.2
+    },
+    {
+      "word": "checkout",
+      "start": 10.2,
+      "end": 10.46
+    },
+    {
+      "word": "button.",
+      "start": 10.46,
+      "end": 10.9
+    },
+    {
+      "word": "Sera",
+      "start": 11.42,
+      "end": 11.64
+    },
+    {
+      "word": "visits",
+      "start": 11.64,
+      "end": 11.9
+    },
+    {
+      "word": "again.",
+      "start": 11.9,
+      "end": 12.38
+    },
+    {
+      "word": "This",
+      "start": 12.8,
+      "end": 12.94
+    },
+    {
+      "word": "time,",
+      "start": 12.94,
+      "end": 13.24
+    },
+    {
+      "word": "the",
+      "start": 13.36,
+      "end": 13.42
+    },
+    {
+      "word": "flowers",
+      "start": 13.42,
+      "end": 13.74
+    },
+    {
+      "word": "arrive",
+      "start": 13.74,
+      "end": 14.32
+    },
+    {
+      "word": "on",
+      "start": 14.32,
+      "end": 14.6
+    },
+    {
+      "word": "her",
+      "start": 14.6,
+      "end": 14.76
+    },
+    {
+      "word": "mom's",
+      "start": 14.76,
+      "end": 15.0
+    },
+    {
+      "word": "birthday.",
+      "start": 15.0,
+      "end": 15.26
+    },
+    {
+      "word": "Every",
+      "start": 16.0,
+      "end": 16.28
+    },
+    {
+      "word": "audit",
+      "start": 16.28,
+      "end": 16.62
+    },
+    {
+      "word": "we",
+      "start": 16.62,
+      "end": 16.84
+    },
+    {
+      "word": "sell",
+      "start": 16.84,
+      "end": 17.06
+    },
+    {
+      "word": "is",
+      "start": 17.06,
+      "end": 17.28
+    },
+    {
+      "word": "a",
+      "start": 17.28,
+      "end": 17.4
+    },
+    {
+      "word": "barrier",
+      "start": 17.4,
+      "end": 17.6
+    },
+    {
+      "word": "removed,",
+      "start": 17.6,
+      "end": 18.04
+    },
+    {
+      "word": "a",
+      "start": 18.4,
+      "end": 18.48
+    },
+    {
+      "word": "customer",
+      "start": 18.48,
+      "end": 18.72
+    },
+    {
+      "word": "unlocked",
+      "start": 18.72,
+      "end": 19.18
+    },
+    {
+      "word": "and",
+      "start": 19.18,
+      "end": 19.48
+    },
+    {
+      "word": "a",
+      "start": 19.48,
+      "end": 19.6
+    },
+    {
+      "word": "legal",
+      "start": 19.6,
+      "end": 19.82
+    },
+    {
+      "word": "risk",
+      "start": 19.82,
+      "end": 20.24
+    },
+    {
+      "word": "reduced.",
+      "start": 20.24,
+      "end": 20.54
+    },
+    {
+      "word": "This",
+      "start": 21.08,
+      "end": 21.22
+    },
+    {
+      "word": "is",
+      "start": 21.22,
+      "end": 21.38
+    },
+    {
+      "word": "Euro",
+      "start": 21.38,
+      "end": 21.82
+    },
+    {
+      "word": "-H.",
+      "start": 21.82,
+      "end": 22.06
+    }
+  ]
+}

@@ -41,6 +41,8 @@ export const INDUSTRY_BENCHMARKS = {
   other:        { label: "Other",                        avgOrderValue: 75,  conversionRate: 0.03 },
 } as const;
 
+export const CONTACT_EMAIL = "ved@neuroedge.co.uk";
+
 export type IndustryKey = keyof typeof INDUSTRY_BENCHMARKS;
 
 export const ACCESSIBILITY_STATS = {

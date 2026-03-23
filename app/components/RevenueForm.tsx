@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { motion, useReducedMotion } from "framer-motion";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { INDUSTRY_BENCHMARKS, type IndustryKey } from "@/lib/constants";
@@ -40,8 +39,6 @@ function validateForm(state: FormState): FormErrors {
 }
 
 export function RevenueForm({ onSubmit, loading = false }: RevenueFormProps) {
-  const prefersReducedMotion = useReducedMotion();
-
   const [form, setForm] = useState<FormState>({
     industry: "other",
     monthlyVisitors: "",
@@ -80,28 +77,15 @@ export function RevenueForm({ onSubmit, loading = false }: RevenueFormProps) {
     });
   }
 
-  const containerVariants = {
-    hidden: { opacity: 0, y: 16 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.4, staggerChildren: 0.1 } },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 12 },
-    visible: { opacity: 1, y: 0 },
-  };
-
   return (
-    <motion.form
+    <form
       onSubmit={handleSubmit}
       aria-label="Revenue estimate calculator"
       noValidate
-      variants={prefersReducedMotion ? {} : containerVariants}
-      initial="hidden"
-      animate="visible"
-      className="space-y-8"
+      className="animate-fade-up space-y-8"
     >
       {/* Step 1: Industry */}
-      <motion.div variants={prefersReducedMotion ? {} : itemVariants} className="space-y-3">
+      <div className="animate-fade-up space-y-3" style={{ animationDelay: "100ms" }}>
         <label
           htmlFor="industry"
           className="block text-lg font-medium text-text-primary"
@@ -128,10 +112,10 @@ export function RevenueForm({ onSubmit, loading = false }: RevenueFormProps) {
             ),
           )}
         </select>
-      </motion.div>
+      </div>
 
       {/* Step 2: Monthly visitors */}
-      <motion.div variants={prefersReducedMotion ? {} : itemVariants} className="space-y-3">
+      <div className="animate-fade-up space-y-3" style={{ animationDelay: "200ms" }}>
         <label
           htmlFor="monthlyVisitors"
           className="block text-lg font-medium text-text-primary"
@@ -170,10 +154,10 @@ export function RevenueForm({ onSubmit, loading = false }: RevenueFormProps) {
           error={errors.monthlyVisitors}
           aria-describedby={errors.monthlyVisitors ? "monthlyVisitors-error" : undefined}
         />
-      </motion.div>
+      </div>
 
       {/* Step 3: Average order value */}
-      <motion.div variants={prefersReducedMotion ? {} : itemVariants} className="space-y-3">
+      <div className="animate-fade-up space-y-3" style={{ animationDelay: "300ms" }}>
         <label
           htmlFor="avgOrderValue"
           className="block text-lg font-medium text-text-primary"
@@ -203,10 +187,10 @@ export function RevenueForm({ onSubmit, loading = false }: RevenueFormProps) {
             error={errors.avgOrderValue}
           />
         </div>
-      </motion.div>
+      </div>
 
       {/* Submit */}
-      <motion.div variants={prefersReducedMotion ? {} : itemVariants}>
+      <div className="animate-fade-up" style={{ animationDelay: "400ms" }}>
         <Button
           type="submit"
           size="lg"
@@ -215,7 +199,7 @@ export function RevenueForm({ onSubmit, loading = false }: RevenueFormProps) {
         >
           Calculate My Uplift →
         </Button>
-      </motion.div>
-    </motion.form>
+      </div>
+    </form>
   );
 }

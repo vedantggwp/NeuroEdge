@@ -1,20 +1,21 @@
 import type { Metadata } from "next";
-import { Inter, Instrument_Serif } from "next/font/google";
-import { ThemeProvider } from "@/app/providers";
-import { ThemeToggle } from "@/components/ui/ThemeToggle";
+import { JetBrains_Mono, Plus_Jakarta_Sans } from "next/font/google";
+import Script from "next/script";
+import { Header } from "@/components/Header";
 import { SITE } from "@/lib/constants";
 import "./globals.css";
 
-const inter = Inter({
-  variable: "--font-inter",
+const jakarta = Plus_Jakarta_Sans({
+  variable: "--font-jakarta",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
   display: "swap",
 });
 
-const instrumentSerif = Instrument_Serif({
-  variable: "--font-instrument-serif",
+const jetbrainsMono = JetBrains_Mono({
+  variable: "--font-mono",
   subsets: ["latin"],
-  weight: "400",
+  weight: ["400", "600", "700", "800"],
   display: "swap",
 });
 
@@ -38,39 +39,26 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      data-theme="light"
-      suppressHydrationWarning
-      className={`${inter.variable} ${instrumentSerif.variable} h-full antialiased`}
+      className={`${jakarta.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-bg-primary text-text-primary font-sans">
-        <ThemeProvider>
-          <a
-            href="#main-content"
-            className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-accent focus:px-4 focus:py-2 focus:text-[#0A2E26] focus:font-medium focus:shadow-lg"
-          >
-            Skip to main content
-          </a>
-          <Header />
-          {children}
-        </ThemeProvider>
+      <body className="relative min-h-full flex flex-col bg-bg-primary text-text-primary font-sans">
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-accent focus:px-4 focus:py-2 focus:text-text-inverse focus:font-medium focus:shadow-lg"
+        >
+          Skip to main content
+        </a>
+        {process.env.NEXT_PUBLIC_POSTHOG_KEY ? (
+          <Script
+            strategy="afterInteractive"
+            src="https://us-assets.i.posthog.com/static/array.js"
+            data-api-host="https://us.i.posthog.com"
+            data-project-api-key={process.env.NEXT_PUBLIC_POSTHOG_KEY}
+          />
+        ) : null}
+        <Header />
+        {children}
       </body>
     </html>
-  );
-}
-
-function Header() {
-  return (
-    <header className="fixed inset-x-0 top-0 z-50 border-b border-border/60 bg-bg-primary/80 backdrop-blur-md">
-      <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-[var(--section-x)]">
-        <a
-          href="/"
-          className="font-serif text-xl text-text-primary transition-colors hover:text-accent"
-          aria-label={`${SITE.name} home`}
-        >
-          {SITE.name}
-        </a>
-        <ThemeToggle />
-      </div>
-    </header>
   );
 }

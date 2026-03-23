@@ -1,7 +1,10 @@
 import puppeteer, { type Browser } from 'puppeteer';
-import AxePuppeteer from '@axe-core/puppeteer';
+import { AxePuppeteer } from '@axe-core/puppeteer';
+import type { AxeResults, NodeResult, TagValue } from 'axe-core';
 import { validateUrlWithDns } from './url-validator.js';
 import { calculateScore } from './score.js';
+import { detectCMS } from './cms-detector.js';
+import { captureAnnotatedScreenshot } from './screenshot.js';
 
 export interface ScanViolation {
   id: string;
@@ -19,6 +22,12 @@ export interface ScanResult {
   violations: ScanViolation[];
   passedRules: number;
   totalRules: number;
+  cms: string;
+  screenshots?: {
+    fullPage: string;
+    annotated: string;
+    issueCount: number;
+  };
 }
 
 let browser: Browser | null = null;
@@ -40,7 +49,9 @@ const IMPACT_ORDER: Record<string, number> = {
   minor: 3,
 };
 
-export async function scanUrl(url: string): Promise<ScanResult> {
+type AxeViolation = AxeResults['violations'][number];
+
+async function scanUrlInternal(url: string): Promise<ScanResult> {
   const validation = await validateUrlWithDns(url);
   if (!validation.valid) {
     throw new Error(validation.reason);
@@ -58,28 +69,54 @@ export async function scanUrl(url: string): Promise<ScanResult> {
     await page.goto(validation.url, { waitUntil: 'networkidle2', timeout: 30_000 });
     await new Promise<void>((r) => setTimeout(r, 2000));
 
-    const results = await new AxePuppeteer(page).analyze();
+    const results: AxeResults = await new AxePuppeteer(page).analyze();
 
     const violations: ScanViolation[] = results.violations
-      .map((v) => ({
+      .map((v: AxeViolation) => ({
         id: v.id,
         impact: v.impact ?? 'minor',
         description: v.description,
         helpUrl: v.helpUrl,
         nodeCount: v.nodes.length,
-        wcagTags: v.tags.filter((t) => t.startsWith('wcag')),
+        wcagTags: v.tags.filter((t: TagValue) => t.startsWith('wcag')),
       }))
       .sort(
-        (a, b) => (IMPACT_ORDER[a.impact] ?? 3) - (IMPACT_ORDER[b.impact] ?? 3),
+        (a: ScanViolation, b: ScanViolation) =>
+          (IMPACT_ORDER[a.impact] ?? 3) - (IMPACT_ORDER[b.impact] ?? 3),
       );
 
     const score = calculateScore({
-      violations: results.violations.map((v) => ({
+      violations: results.violations.map((v: AxeViolation) => ({
         impact: v.impact ?? 'minor',
         nodes: v.nodes,
       })),
       passes: results.passes,
     });
+
+    const cms = await detectCMS(page);
+
+    // Capture annotated screenshot (optional — failures must not break the scan)
+    let screenshots: ScanResult['screenshots'];
+    try {
+      const screenshotViolations = results.violations.map((v: AxeViolation) => ({
+        id: v.id,
+        impact: v.impact ?? 'minor',
+        targets: v.nodes.flatMap((n: NodeResult) =>
+          n.target.map((t: string | string[]) => (typeof t === 'string' ? t : t.toString())),
+        ),
+      }));
+
+      const captured = await captureAnnotatedScreenshot(page, screenshotViolations);
+
+      screenshots = {
+        fullPage: captured.fullPage.toString('base64'),
+        annotated: captured.annotated.toString('base64'),
+        issueCount: captured.issueHighlights.filter((h) => h.boundingBox !== null).length,
+      };
+    } catch (screenshotError) {
+      // Screenshot failure is non-fatal — log and continue
+      console.error('Screenshot capture failed:', screenshotError);
+    }
 
     return {
       url: validation.url,
@@ -91,8 +128,23 @@ export async function scanUrl(url: string): Promise<ScanResult> {
         results.passes.length +
         results.violations.length +
         results.incomplete.length,
+      cms,
+      screenshots,
     };
   } finally {
     await page.close();
   }
+}
+
+const SCAN_TIMEOUT_MS = 45_000;
+
+export async function scanUrl(url: string): Promise<ScanResult> {
+  const timeout = new Promise<never>((_, reject) => {
+    setTimeout(
+      () => reject(new Error(`Scan timed out after ${SCAN_TIMEOUT_MS / 1000}s`)),
+      SCAN_TIMEOUT_MS,
+    );
+  });
+
+  return Promise.race([scanUrlInternal(url), timeout]);
 }

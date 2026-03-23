@@ -71,7 +71,10 @@ export async function POST(req: NextRequest) {
     if (scanServiceUrl) {
       await fetch(`${scanServiceUrl}/api/generate-report`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "X-API-Key": process.env.SCAN_SERVICE_API_KEY ?? "",
+        },
         body: JSON.stringify({ reportId: report.id, scanId }),
       }).catch((err: unknown) => {
         console.error("Webhook: failed to trigger report generation:", err);

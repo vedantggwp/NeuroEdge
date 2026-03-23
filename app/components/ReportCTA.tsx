@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useId } from "react";
-import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
@@ -23,7 +22,6 @@ const REPORT_BENEFITS = [
 export function ReportCTA({ scanId }: Props) {
   const emailId = useId();
   const couponId = useId();
-  const prefersReducedMotion = useReducedMotion();
 
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState("");
@@ -143,15 +141,10 @@ export function ReportCTA({ scanId }: Props) {
       ? `£${((2900 * (1 - discountPercent / 100)) / 100).toFixed(2)}`
       : "£29";
 
-  const collapseVariants = {
-    hidden: { height: 0, opacity: 0 },
-    visible: { height: "auto", opacity: 1 },
-  };
-
   return (
     <Card padding="lg" className="mt-10">
       {/* Headline */}
-      <h2 className="font-serif text-2xl text-text-primary sm:text-3xl">
+      <h2 className="font-sans text-2xl text-text-primary sm:text-3xl">
         Get your full report
       </h2>
       <p className="mt-2 text-text-secondary">
@@ -211,70 +204,64 @@ export function ReportCTA({ scanId }: Props) {
           </button>
         ) : null}
 
-        <AnimatePresence initial={false}>
-          {couponVisible ? (
-            <motion.div
-              key="coupon-field"
-              variants={prefersReducedMotion ? {} : collapseVariants}
-              initial="hidden"
-              animate="visible"
-              exit="hidden"
-              transition={{ duration: 0.22, ease: "easeInOut" }}
-              style={{ overflow: "hidden" }}
+        <div
+          className="overflow-hidden transition-all duration-300"
+          style={{
+            maxHeight: couponVisible ? "300px" : "0",
+            opacity: couponVisible ? 1 : 0,
+          }}
+        >
+          <div className="pt-1">
+            <label
+              htmlFor={couponId}
+              className="mb-2 block text-sm font-medium text-text-primary"
             >
-              <div className="pt-1">
-                <label
-                  htmlFor={couponId}
-                  className="mb-2 block text-sm font-medium text-text-primary"
-                >
-                  Coupon code
-                </label>
-                <div className="flex gap-2">
-                  <Input
-                    id={couponId}
-                    type="text"
-                    placeholder="NEURO20"
-                    autoComplete="off"
-                    value={couponCode}
-                    onChange={(e) => {
-                      setCouponCode(e.target.value);
-                      if (couponState !== "idle") {
-                        setCouponState("idle");
-                        setCouponError("");
-                        setDiscountPercent(0);
-                      }
-                    }}
-                    error={couponState === "invalid" ? couponError : undefined}
-                    aria-label="Coupon code"
-                    className="uppercase"
-                  />
-                  <Button
-                    variant="secondary"
-                    size="md"
-                    onClick={handleApplyCoupon}
-                    loading={couponState === "validating"}
-                    disabled={!couponCode.trim() || couponState === "validating"}
-                    className="flex-shrink-0"
-                  >
-                    Apply
-                  </Button>
-                </div>
+              Coupon code
+            </label>
+            <div className="flex gap-2">
+              <Input
+                id={couponId}
+                type="text"
+                placeholder="NEURO20"
+                autoComplete="off"
+                value={couponCode}
+                onChange={(e) => {
+                  setCouponCode(e.target.value);
+                  if (couponState !== "idle") {
+                    setCouponState("idle");
+                    setCouponError("");
+                    setDiscountPercent(0);
+                  }
+                }}
+                error={couponState === "invalid" ? couponError : undefined}
+                aria-label="Coupon code"
+                className="uppercase"
+              />
+              <Button
+                variant="secondary"
+                size="md"
+                onClick={handleApplyCoupon}
+                loading={couponState === "validating"}
+                disabled={!couponCode.trim() || couponState === "validating"}
+                className="flex-shrink-0"
+              >
+                Apply
+              </Button>
+            </div>
 
-                {/* Coupon success feedback */}
-                {couponState === "valid" ? (
-                  <p
-                    role="status"
-                    className="mt-2 text-sm font-medium text-green-600 dark:text-green-400"
-                  >
-                    {isFree
-                      ? "100% off — your report is free!"
-                      : `${discountPercent}% off applied — you pay ${displayPrice}`}
-                  </p>
-                ) : null}
-              </div>
-            </motion.div>
-          ) : null}
-        </AnimatePresence>
+            {/* Coupon success feedback */}
+            {couponState === "valid" ? (
+              <p
+                role="status"
+                className="mt-2 text-sm font-medium text-green-600 dark:text-green-400"
+              >
+                {isFree
+                  ? "100% off — your report is free!"
+                  : `${discountPercent}% off applied — you pay ${displayPrice}`}
+              </p>
+            ) : null}
+          </div>
+        </div>
       </div>
 
       {/* CTA button */}

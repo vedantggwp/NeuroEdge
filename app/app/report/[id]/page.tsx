@@ -2,8 +2,8 @@
 
 import { use, useState, useEffect, useCallback, useRef } from "react";
 import { useSearchParams } from "next/navigation";
-import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { getSupabase } from "@/lib/supabase";
+import { CONTACT_EMAIL } from "@/lib/constants";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
@@ -87,7 +87,7 @@ function StatusDisplay({ report, onRegenerate, regenerating }: StatusDisplayProp
       <div className="space-y-4">
         <div className="flex items-center gap-3">
           <PulsingDot />
-          <h1 className="font-serif text-2xl text-text-primary sm:text-3xl">
+          <h1 className="font-sans text-2xl text-text-primary sm:text-3xl">
             Your report is being prepared
           </h1>
         </div>
@@ -107,7 +107,7 @@ function StatusDisplay({ report, onRegenerate, regenerating }: StatusDisplayProp
       <div className="space-y-4">
         <div className="flex items-center gap-3">
           <PulsingDot color="bg-accent" />
-          <h1 className="font-serif text-2xl text-text-primary sm:text-3xl">
+          <h1 className="font-sans text-2xl text-text-primary sm:text-3xl">
             Almost there&hellip;
           </h1>
         </div>
@@ -141,7 +141,7 @@ function StatusDisplay({ report, onRegenerate, regenerating }: StatusDisplayProp
               />
             </svg>
           </span>
-          <h1 className="font-serif text-2xl text-text-primary sm:text-3xl">
+          <h1 className="font-sans text-2xl text-text-primary sm:text-3xl">
             Report sent
           </h1>
         </div>
@@ -153,10 +153,10 @@ function StatusDisplay({ report, onRegenerate, regenerating }: StatusDisplayProp
         <p className="text-sm text-text-tertiary">
           Can&apos;t find it? Check your spam folder, or email{" "}
           <a
-            href="mailto:ved@neuroedge.co.uk"
+            href={`mailto:${CONTACT_EMAIL}`}
             className="underline decoration-accent underline-offset-2 transition-colors hover:text-accent"
           >
-            ved@neuroedge.co.uk
+            {CONTACT_EMAIL}
           </a>{" "}
           and we&apos;ll resend it.
         </p>
@@ -184,17 +184,17 @@ function StatusDisplay({ report, onRegenerate, regenerating }: StatusDisplayProp
               />
             </svg>
           </span>
-          <h1 className="font-serif text-2xl text-text-primary sm:text-3xl">
+          <h1 className="font-sans text-2xl text-text-primary sm:text-3xl">
             Something went wrong
           </h1>
         </div>
         <p className="text-base leading-relaxed text-text-secondary">
           We hit a snag generating your report. Email{" "}
           <a
-            href="mailto:ved@neuroedge.co.uk"
+            href={`mailto:${CONTACT_EMAIL}`}
             className="underline decoration-accent underline-offset-2 transition-colors hover:text-accent"
           >
-            ved@neuroedge.co.uk
+            {CONTACT_EMAIL}
           </a>{" "}
           and we&apos;ll sort this out personally.
         </p>
@@ -273,7 +273,6 @@ export default function ReportStatusPage({
   const { id: scanId } = use(params);
   const searchParams = useSearchParams();
   const sessionId = searchParams.get("session_id");
-  const prefersReducedMotion = useReducedMotion();
 
   const [pageState, setPageState] = useState<PageState>(
     sessionId ? { phase: "loading" } : { phase: "lookup" },
@@ -497,122 +496,114 @@ export default function ReportStatusPage({
 
   // ── Render ───────────────────────────────────────────────────────────────
 
-  const motionProps = prefersReducedMotion
-    ? {}
-    : { initial: { opacity: 0, y: 16 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.4 } };
-
   return (
     <main className="mx-auto max-w-lg px-[var(--section-x)] pb-20 pt-24">
-      <AnimatePresence mode="wait">
-        {pageState.phase === "loading" && (
-          <motion.div key="loading" {...motionProps}>
-            <Card padding="lg">
-              <div className="flex flex-col items-center gap-6 py-8 text-center">
-                <span
-                  className="inline-block h-10 w-10 animate-spin rounded-full border-[3px] border-accent border-r-transparent"
-                  role="status"
-                  aria-label="Loading report status"
-                />
-                <div className="space-y-2">
-                  <p className="font-serif text-xl text-text-primary">
-                    Looking up your report&hellip;
-                  </p>
-                  <p className="text-sm text-text-secondary">
-                    This page will update automatically.
-                  </p>
-                </div>
-              </div>
-            </Card>
-          </motion.div>
-        )}
-
-        {pageState.phase === "lookup" && (
-          <motion.div key="lookup" {...motionProps}>
-            <Card padding="lg" className="space-y-6">
-              <div>
-                <h1 className="font-serif text-2xl text-text-primary sm:text-3xl">
-                  Check your report status
-                </h1>
-                <p className="mt-2 text-sm text-text-secondary">
-                  Enter the email address you used when purchasing to find your
-                  report.
+      {pageState.phase === "loading" && (
+        <div className="animate-fade-up">
+          <Card padding="lg">
+            <div className="flex flex-col items-center gap-6 py-8 text-center">
+              <span
+                className="inline-block h-10 w-10 animate-spin rounded-full border-[3px] border-accent border-r-transparent"
+                role="status"
+                aria-label="Loading report status"
+              />
+              <div className="space-y-2">
+                <p className="font-sans text-xl text-text-primary">
+                  Looking up your report&hellip;
+                </p>
+                <p className="text-sm text-text-secondary">
+                  This page will update automatically.
                 </p>
               </div>
-              <EmailLookupForm
-                onSubmit={handleEmailLookup}
-                loading={emailLookupLoading}
-                error={emailLookupError}
-              />
-            </Card>
-          </motion.div>
-        )}
+            </div>
+          </Card>
+        </div>
+      )}
 
-        {pageState.phase === "not-found" && (
-          <motion.div key="not-found" {...motionProps}>
-            <Card padding="lg" className="space-y-4 text-center">
-              <h1 className="font-serif text-2xl text-text-primary">
-                Report not found
+      {pageState.phase === "lookup" && (
+        <div className="animate-fade-up">
+          <Card padding="lg" className="space-y-6">
+            <div>
+              <h1 className="font-sans text-2xl text-text-primary sm:text-3xl">
+                Check your report status
               </h1>
-              <p className="text-text-secondary">
-                We couldn&apos;t find a report for this scan. If you&apos;ve
-                just purchased, it may take a moment to appear.
+              <p className="mt-2 text-sm text-text-secondary">
+                Enter the email address you used when purchasing to find your
+                report.
               </p>
-              <Button
-                variant="secondary"
-                onClick={() => setPageState({ phase: "lookup" })}
-              >
-                Try a different email
-              </Button>
-            </Card>
-          </motion.div>
-        )}
+            </div>
+            <EmailLookupForm
+              onSubmit={handleEmailLookup}
+              loading={emailLookupLoading}
+              error={emailLookupError}
+            />
+          </Card>
+        </div>
+      )}
 
-        {pageState.phase === "error" && (
-          <motion.div key="error" {...motionProps}>
-            <Card padding="lg" className="space-y-4 text-center">
-              <h1 className="font-serif text-2xl text-text-primary">
-                Something went wrong
-              </h1>
-              <p className="text-text-secondary">
-                {pageState.message}
-              </p>
-              <Button
-                variant="secondary"
-                onClick={() =>
-                  sessionId
-                    ? setPageState({ phase: "loading" })
-                    : setPageState({ phase: "lookup" })
-                }
-              >
-                Try again
-              </Button>
-            </Card>
-          </motion.div>
-        )}
+      {pageState.phase === "not-found" && (
+        <div className="animate-fade-up">
+          <Card padding="lg" className="space-y-4 text-center">
+            <h1 className="font-sans text-2xl text-text-primary">
+              Report not found
+            </h1>
+            <p className="text-text-secondary">
+              We couldn&apos;t find a report for this scan. If you&apos;ve
+              just purchased, it may take a moment to appear.
+            </p>
+            <Button
+              variant="secondary"
+              onClick={() => setPageState({ phase: "lookup" })}
+            >
+              Try a different email
+            </Button>
+          </Card>
+        </div>
+      )}
 
-        {pageState.phase === "found" && (
-          <motion.div key={`found-${pageState.report.status}`} {...motionProps}>
-            <Card padding="lg">
-              <StatusDisplay
-                report={pageState.report}
-                onRegenerate={handleRegenerate}
-                regenerating={regenerating}
-              />
-            </Card>
+      {pageState.phase === "error" && (
+        <div className="animate-fade-up">
+          <Card padding="lg" className="space-y-4 text-center">
+            <h1 className="font-sans text-2xl text-text-primary">
+              Something went wrong
+            </h1>
+            <p className="text-text-secondary">
+              {pageState.message}
+            </p>
+            <Button
+              variant="secondary"
+              onClick={() =>
+                sessionId
+                  ? setPageState({ phase: "loading" })
+                  : setPageState({ phase: "lookup" })
+              }
+            >
+              Try again
+            </Button>
+          </Card>
+        </div>
+      )}
 
-            {ACTIVE_STATUSES.has(pageState.report.status) && (
-              <motion.p
-                className="mt-4 text-center text-xs text-text-tertiary"
-                initial={prefersReducedMotion ? {} : { opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.6 }}
-              >
-                Refreshing automatically every 10 seconds&hellip;
-              </motion.p>
-            )}
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {pageState.phase === "found" && (
+        <div className="animate-fade-up">
+          <Card padding="lg">
+            <StatusDisplay
+              report={pageState.report}
+              onRegenerate={handleRegenerate}
+              regenerating={regenerating}
+            />
+          </Card>
+
+          {ACTIVE_STATUSES.has(pageState.report.status) && (
+            <p
+              className="animate-fade-up mt-4 text-center text-xs text-text-tertiary"
+              style={{ animationDelay: "600ms" }}
+            >
+              Refreshing automatically every 10 seconds&hellip;
+            </p>
+          )}
+        </div>
+      )}
     </main>
   );
 }

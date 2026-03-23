@@ -40,3 +40,8 @@ scan-service/dist/
 # Allow Supabase
 !supabase/
 !supabase/**
+
+# Environment files (never commit)
+**/.env
+**/.env.*
+!**/.env.example

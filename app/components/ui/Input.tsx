@@ -18,10 +18,10 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           aria-invalid={error ? "true" : undefined}
           aria-describedby={error ? errorId : undefined}
           className={[
-            "w-full rounded-xl border bg-bg-surface px-5 py-3.5 text-lg text-text-primary",
+            "w-full rounded-full border bg-white px-6 py-3.5 text-base text-text-primary",
             "placeholder:text-text-tertiary",
-            "transition-colors duration-150",
-            "focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent",
+            "transition-all duration-300",
+            "focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/20",
             error
               ? "border-severity-critical"
               : "border-border hover:border-border-hover",

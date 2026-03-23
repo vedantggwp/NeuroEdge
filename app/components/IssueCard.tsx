@@ -1,6 +1,3 @@
-"use client";
-
-import { motion, useReducedMotion } from "framer-motion";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 
@@ -20,17 +17,10 @@ interface IssueCardProps {
 }
 
 export function IssueCard({ issue, index }: IssueCardProps) {
-  const prefersReducedMotion = useReducedMotion();
-
   return (
-    <motion.div
-      initial={prefersReducedMotion ? {} : { opacity: 0, y: 16 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={
-        prefersReducedMotion
-          ? { duration: 0 }
-          : { delay: index * 0.1, duration: 0.4, ease: "easeOut" }
-      }
+    <div
+      className="animate-fade-up"
+      style={{ animationDelay: `${index * 100}ms` }}
     >
       <Card padding="md" className="flex flex-col gap-3">
         <div className="flex items-center justify-between gap-3">
@@ -48,6 +38,6 @@ export function IssueCard({ issue, index }: IssueCardProps) {
           <p className="text-sm text-text-secondary">{issue.help}</p>
         ) : null}
       </Card>
-    </motion.div>
+    </div>
   );
 }

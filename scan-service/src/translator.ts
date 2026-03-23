@@ -9,6 +9,9 @@ export interface TranslatedIssue {
   fixDifficulty: 'easy' | 'medium' | 'hard';
   estimatedFixTime: string;
   whatToTellDeveloper: string;
+  howToFixYourself?: string;
+  cmsSpecificSteps?: string;
+  canFixYourself?: boolean;
 }
 
 export interface TranslationOutput {
@@ -26,7 +29,7 @@ export type ViolationInput = {
 function isTranslatedIssue(value: unknown): value is TranslatedIssue {
   if (!value || typeof value !== 'object') return false;
   const i = value as Record<string, unknown>;
-  return (
+  const hasRequiredFields =
     typeof i['id'] === 'string' &&
     i['id'].length > 0 &&
     typeof i['plainEnglish'] === 'string' &&
@@ -34,8 +37,16 @@ function isTranslatedIssue(value: unknown): value is TranslatedIssue {
     typeof i['businessImpact'] === 'string' &&
     i['businessImpact'].length > 0 &&
     typeof i['fixDifficulty'] === 'string' &&
-    i['fixDifficulty'].length > 0
-  );
+    i['fixDifficulty'].length > 0;
+
+  if (!hasRequiredFields) return false;
+
+  // Validate optional new fields if present (don't reject if absent)
+  if ('howToFixYourself' in i && typeof i['howToFixYourself'] !== 'string') return false;
+  if ('cmsSpecificSteps' in i && typeof i['cmsSpecificSteps'] !== 'string') return false;
+  if ('canFixYourself' in i && typeof i['canFixYourself'] !== 'boolean') return false;
+
+  return true;
 }
 
 export function validateTranslation(output: unknown): output is TranslationOutput {
@@ -46,7 +57,7 @@ export function validateTranslation(output: unknown): output is TranslationOutpu
   return obj['issues'].every(isTranslatedIssue);
 }
 
-function buildPrompt(violations: ViolationInput[], url: string, industry: string): string {
+function buildPrompt(violations: ViolationInput[], url: string, industry: string, cms: string): string {
   const violationList = violations
     .map((v) => `- ${v.id} (${v.impact}): ${v.description} — affects ${v.nodeCount} elements`)
     .join('\n');
@@ -66,6 +77,9 @@ For each violation, return a JSON array with:
 - fixDifficulty: "easy" (under 1 hour), "medium" (1-4 hours), or "hard" (needs a developer)
 - estimatedFixTime: human-readable estimate
 - whatToTellDeveloper: one sentence a business owner can copy-paste to their web developer
+- howToFixYourself: step-by-step instructions a non-technical person can follow to fix this issue themselves (if possible). Write as if explaining to someone who has never seen HTML. If the fix requires a developer, say "This one needs a web developer. Forward the 'whatToTellDeveloper' text to them."
+- cmsSpecificSteps: if the CMS is "${cms}", provide specific steps for that platform's editor (e.g., "In WordPress: Go to Pages > Edit > click the image > add Alternative Text"). If CMS is "unknown", provide generic instructions.
+- canFixYourself: true if a non-technical person could fix this using their CMS editor (alt text, contrast changes, form labels), false if it requires code changes
 
 Respond ONLY with valid JSON: { "issues": [...] }`;
 }
@@ -79,6 +93,9 @@ function buildFallback(violations: ViolationInput[]): TranslatedIssue[] {
       v.impact === 'critical' || v.impact === 'serious' ? ('medium' as const) : ('easy' as const),
     estimatedFixTime: 'Varies',
     whatToTellDeveloper: `Please fix: ${v.id} — ${v.description}`,
+    howToFixYourself: 'This one needs a web developer. Forward the \'whatToTellDeveloper\' text to them.',
+    cmsSpecificSteps: 'Contact your web developer for platform-specific guidance.',
+    canFixYourself: false,
   }));
 }
 
@@ -92,10 +109,11 @@ export async function translateViolations(
   violations: ViolationInput[],
   url: string,
   industry: string,
+  cms: string = 'unknown',
 ): Promise<TranslatedIssue[]> {
   if (violations.length === 0) return [];
 
-  const prompt = buildPrompt(violations, url, industry);
+  const prompt = buildPrompt(violations, url, industry, cms);
 
   try {
     const response = await anthropic.messages.create({

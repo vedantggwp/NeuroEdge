@@ -13,17 +13,17 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variantClasses: Record<Variant, string> = {
   primary:
-    "bg-accent text-[#0A2E26] font-semibold hover:bg-accent-hover active:scale-[0.98] shadow-sm",
+    "bg-accent text-text-inverse font-bold hover:bg-accent-hover active:scale-[0.97]",
   secondary:
-    "border border-border bg-bg-surface text-text-primary font-medium hover:bg-bg-surface-hover hover:border-border-hover",
+    "border border-border bg-white text-text-primary font-medium hover:bg-bg-surface-hover hover:border-border-hover",
   ghost:
     "text-text-secondary hover:text-text-primary hover:bg-bg-surface-hover",
 };
 
 const sizeClasses: Record<Size, string> = {
-  sm: "h-9 px-4 text-sm rounded-lg",
-  md: "h-11 px-5 text-base rounded-lg",
-  lg: "h-[52px] px-7 text-lg rounded-xl",
+  sm: "h-9 px-4 text-sm",
+  md: "h-11 px-5 text-base",
+  lg: "h-[52px] px-7 text-lg",
 };
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
@@ -46,7 +46,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         disabled={isDisabled}
         className={[
-          "inline-flex items-center justify-center gap-2 transition-all duration-150 cursor-pointer",
+          "inline-flex items-center justify-center gap-2 rounded-full transition-all duration-150 cursor-pointer",
           "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
           "disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none",
           variantClasses[variant],
