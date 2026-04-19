@@ -20,6 +20,9 @@
 # Allow git infrastructure
 !.gitignore
 
+# Allow top-level MANIFEST
+!MANIFEST.md
+
 # Ignore build artifacts inside video
 video/out/
 video/node_modules/

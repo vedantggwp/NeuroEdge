@@ -6,6 +6,12 @@ import { calculateScore } from './score.js';
 import { detectCMS } from './cms-detector.js';
 import { captureAnnotatedScreenshot } from './screenshot.js';
 
+export interface ScanSampleNode {
+  target: string[];
+  html: string;
+  failureSummary: string;
+}
+
 export interface ScanViolation {
   id: string;
   impact: string;
@@ -13,6 +19,7 @@ export interface ScanViolation {
   helpUrl: string;
   nodeCount: number;
   wcagTags: string[];
+  sampleNodes?: ScanSampleNode[];
 }
 
 export interface ScanResult {
@@ -71,6 +78,9 @@ async function scanUrlInternal(url: string): Promise<ScanResult> {
 
     const results: AxeResults = await new AxePuppeteer(page).analyze();
 
+    const MAX_SAMPLE_NODES = 3;
+    const MAX_HTML_CHARS = 200;
+
     const violations: ScanViolation[] = results.violations
       .map((v: AxeViolation) => ({
         id: v.id,
@@ -79,6 +89,13 @@ async function scanUrlInternal(url: string): Promise<ScanResult> {
         helpUrl: v.helpUrl,
         nodeCount: v.nodes.length,
         wcagTags: v.tags.filter((t: TagValue) => t.startsWith('wcag')),
+        sampleNodes: v.nodes.slice(0, MAX_SAMPLE_NODES).map((n: NodeResult) => ({
+          target: n.target.map((t: string | string[]) =>
+            typeof t === 'string' ? t : t.join(' '),
+          ),
+          html: (n.html ?? '').slice(0, MAX_HTML_CHARS),
+          failureSummary: n.failureSummary ?? '',
+        })),
       }))
       .sort(
         (a: ScanViolation, b: ScanViolation) =>

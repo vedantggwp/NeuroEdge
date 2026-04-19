@@ -135,6 +135,23 @@ const KEYWORD_MAP: Record<Exclude<IndustryKey, "other">, readonly string[]> = {
 
 const MATCH_THRESHOLD = 2;
 
+/**
+ * Escape regex metacharacters so user-provided strings can be safely
+ * interpolated into a RegExp source. Matches the MDN reference pattern.
+ */
+function escapeRegex(input: string): string {
+  return input.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+/**
+ * Build a word-boundary, case-insensitive regex for a keyword.
+ * Multi-word phrases (e.g. "order online", "gas safe") still match
+ * as phrases because \b only anchors at the outer ends of the pattern.
+ */
+function buildKeywordRegex(keyword: string): RegExp {
+  return new RegExp(`\\b${escapeRegex(keyword)}\\b`, "i");
+}
+
 export function detectIndustry(signals: PageSignals): IndustryKey {
   // 1. Schema.org type match is decisive
   for (const schemaType of signals.schemaTypes) {
@@ -143,7 +160,10 @@ export function detectIndustry(signals: PageSignals): IndustryKey {
     if (match) return match;
   }
 
-  // 2. Keyword scoring across all text signals
+  // 2. Keyword scoring across all text signals.
+  // Lower-casing is redundant with the case-insensitive regex flag, but
+  // it keeps the haystack cheap for repeated scans and matches the prior
+  // behaviour for any consumer inspecting intermediate state.
   const haystack = [
     signals.title,
     signals.metaDescription,
@@ -161,7 +181,7 @@ export function detectIndustry(signals: PageSignals): IndustryKey {
   for (const [industry, keywords] of Object.entries(KEYWORD_MAP)) {
     let score = 0;
     for (const keyword of keywords) {
-      if (haystack.includes(keyword)) {
+      if (buildKeywordRegex(keyword).test(haystack)) {
         score += 1;
       }
     }

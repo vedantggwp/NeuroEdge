@@ -24,7 +24,8 @@ export function calculateScore(input: ScoringInput): number {
   if (totalRules === 0) return 100;
 
   const passRatio = passes.length / totalRules;
-  const deductionPenalty = Math.min(totalDeductions / (totalRules * 2), 1);
+  // Hyperbolic curve d/(d+2R) stays strictly <1 and monotonic at high deductions (old Math.min cap saturated).
+  const deductionPenalty = totalDeductions / (totalDeductions + totalRules * 2);
   const raw = (passRatio * 0.6 + (1 - deductionPenalty) * 0.4) * 100;
 
   return Math.max(0, Math.min(100, Math.round(raw)));

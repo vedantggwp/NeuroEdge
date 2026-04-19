@@ -18,12 +18,19 @@ export interface TranslationOutput {
   issues: TranslatedIssue[];
 }
 
+export type ViolationSampleNode = {
+  target: string[];
+  html: string;
+  failureSummary: string;
+};
+
 export type ViolationInput = {
   id: string;
   impact: string;
   description: string;
   helpUrl: string;
   nodeCount: number;
+  sampleNodes?: ViolationSampleNode[];
 };
 
 function isTranslatedIssue(value: unknown): value is TranslatedIssue {
@@ -57,9 +64,26 @@ export function validateTranslation(output: unknown): output is TranslationOutpu
   return obj['issues'].every(isTranslatedIssue);
 }
 
+const MAX_SAMPLE_NODES_IN_PROMPT = 3;
+const MAX_HTML_CHARS_IN_PROMPT = 200;
+
+function formatSampleNodes(sampleNodes?: ViolationSampleNode[]): string {
+  if (!sampleNodes || sampleNodes.length === 0) return '';
+  const examples = sampleNodes.slice(0, MAX_SAMPLE_NODES_IN_PROMPT).map((n, i) => {
+    const selector = n.target.join(' ') || '(no selector)';
+    const html = (n.html ?? '').slice(0, MAX_HTML_CHARS_IN_PROMPT);
+    const htmlLine = html ? `\n    html: ${html}` : '';
+    return `  ${i + 1}. selector: ${selector}${htmlLine}`;
+  });
+  return `\n  Example elements:\n${examples.join('\n')}`;
+}
+
 function buildPrompt(violations: ViolationInput[], url: string, industry: string, cms: string): string {
   const violationList = violations
-    .map((v) => `- ${v.id} (${v.impact}): ${v.description} — affects ${v.nodeCount} elements`)
+    .map((v) => {
+      const header = `- ${v.id} (${v.impact}): ${v.description} — affects ${v.nodeCount} elements`;
+      return `${header}${formatSampleNodes(v.sampleNodes)}`;
+    })
     .join('\n');
 
   return `You are NeuroEdge, an accessibility audit tool for UK small businesses. Translate these WCAG violations into plain English that a non-technical business owner can understand.
@@ -76,7 +100,7 @@ For each violation, return a JSON array with:
 - businessImpact: explain how this affects their customers and revenue
 - fixDifficulty: "easy" (under 1 hour), "medium" (1-4 hours), or "hard" (needs a developer)
 - estimatedFixTime: human-readable estimate
-- whatToTellDeveloper: one sentence a business owner can copy-paste to their web developer
+- whatToTellDeveloper: one sentence a business owner can copy-paste to their web developer. If example elements are listed above, reference one real selector from them so the developer knows exactly where to look.
 - howToFixYourself: step-by-step instructions a non-technical person can follow to fix this issue themselves (if possible). Write as if explaining to someone who has never seen HTML. If the fix requires a developer, say "This one needs a web developer. Forward the 'whatToTellDeveloper' text to them."
 - cmsSpecificSteps: if the CMS is "${cms}", provide specific steps for that platform's editor (e.g., "In WordPress: Go to Pages > Edit > click the image > add Alternative Text"). If CMS is "unknown", provide generic instructions.
 - canFixYourself: true if a non-technical person could fix this using their CMS editor (alt text, contrast changes, form labels), false if it requires code changes
