@@ -20,8 +20,9 @@
 # Allow git infrastructure
 !.gitignore
 
-# Allow top-level MANIFEST
+# Allow top-level MANIFEST + README
 !MANIFEST.md
+!README.md
 
 # Ignore build artifacts inside video
 video/out/

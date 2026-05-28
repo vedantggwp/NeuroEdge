@@ -3,7 +3,8 @@
 ## Key Files
 
 ### Top level
-- `app/` - Next.js frontend (neuroedge.co.uk). Deployed on Vercel.
+- `README.md` - Root project README (product overview, architecture, local dev, deploy status).
+- `app/` - Next.js frontend. Deployed on Vercel; public URL `app-beta-fawn.vercel.app` (intended domain `neuroedge.co.uk` is DOWN — DNS zone broken, see health-check 2026-05-23).
 - `scan-service/` - Node/Fastify engine. Deployed on VPS (openclaw) behind Caddy.
 - `supabase/` - DB migrations (`001_initial.sql`, `002_add_columns_rls_indexes.sql`).
 - `docs/` - Plans, playbooks, audit reports.
@@ -29,6 +30,8 @@
 - `scan-service/ENGINE.md` - API contract, env vars, deployment notes.
 
 ## Recent Changes
+- 2026-05-28: Created root `README.md`; set GitHub homepage to `app-beta-fawn.vercel.app` and default branch to `master`; corrected stale `neuroedge.co.uk` live-URL claim.
+- 2026-05-23: Created `docs/health-check-2026-05-23.md` - prod outage audit. P0: `neuroedge.co.uk` DNS zone dead (Route 53 delegation broken). Includes fix plan + proposed PR list.
 - 2026-04-19: Fixed `src/industry-detector.ts` - word-boundary regex instead of substring match; added `tests/industry-detector.test.ts` (6 cases).
 - 2026-04-19: Fixed `src/score.ts` - replaced hard-capped `min(d/(2R), 1)` with hyperbolic `d/(d + 2R)`; no saturation at high deductions.
 - 2026-04-19: Updated `src/scanner.ts` and `src/translator.ts` - preserve top-3 axe node details (target, html, failureSummary) end-to-end.
