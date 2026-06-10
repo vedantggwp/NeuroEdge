@@ -6,7 +6,8 @@
 - `README.md` - Root project README (product overview, architecture, local dev, deploy status).
 - `app/` - Next.js frontend. Deployed on Vercel; public URL `app-beta-fawn.vercel.app` (intended domain `neuroedge.co.uk` is DOWN — DNS zone broken, see health-check 2026-05-23).
 - `scan-service/` - Node/Fastify engine. Deployed on VPS (openclaw) behind Caddy.
-- `supabase/` - DB migrations (`001_initial.sql`, `002_add_columns_rls_indexes.sql`).
+- `mcp-server/` - Open-source, standalone MCP server (BYO-AI accessibility auditor). Self-contained; no Supabase/LLM deps. Stdio transport.
+- `supabase/` - DB migrations (`001_initial.sql`, `002_add_columns_rls_indexes.sql`). NOTE: as of 2026-06-10, live DB has RLS DISABLED + anon full CRUD — migration 002 never applied (launch-blocker).
 - `docs/` - Plans, playbooks, audit reports.
 - `brand/`, `concepts/`, `PitchDeck/` - Pitch and brand assets.
 - `video/` - Pitch video Remotion project.
@@ -29,7 +30,21 @@
 - `scan-service/tests/` - Vitest unit tests. Covers score, industry-detector, translator (schema), url-validator.
 - `scan-service/ENGINE.md` - API contract, env vars, deployment notes.
 
+### mcp-server (open-source MCP server)
+- `mcp-server/src/index.ts` - Entry point; runs `McpServer` over stdio. Graceful Chromium shutdown on SIGINT/SIGTERM.
+- `mcp-server/src/server.ts` - `buildServer()`; registers the `neuroedge_scan_website` tool (Zod in/out schemas, read-only). Scanner is injectable for tests. Returns structured findings for the host AI to translate (BYO-AI).
+- `mcp-server/src/scanner.ts` - Puppeteer + axe-core runner. Lazy-loads Chromium; re-validates every redirect against the SSRF guard.
+- `mcp-server/src/url-guard.ts` - SSRF guard. Blocks private/reserved IPv4 AND IPv6 (loopback, ULA, link-local, CGNAT, metadata, IPv4-mapped); resolves A+AAAA; re-checked per redirect.
+- `mcp-server/src/score.ts` - Accessibility score (shared formula with scan-service).
+- `mcp-server/src/cms-detector.ts` - Heuristic CMS fingerprinting (shared logic with scan-service).
+- `mcp-server/src/format.ts` - Markdown/JSON rendering with a CHARACTER_LIMIT cap.
+- `mcp-server/src/types.ts` - ScanResult / ScanViolation interfaces.
+- `mcp-server/tests/` - Vitest: url-guard (IPv4/IPv6 SSRF), score, full MCP round-trip via InMemoryTransport. 37 tests.
+- `mcp-server/README.md` - OSS docs: BYO-AI rationale, Claude Desktop config, tool reference, security.
+
 ## Recent Changes
+- 2026-06-10: Created `mcp-server/` - open-source, standalone MCP server wrapping the scan engine (BYO-AI). One tool `neuroedge_scan_website`; SSRF-hardened (IPv6 + redirect re-validation); 37 tests pass; built + stdio handshake verified. Chromium download skipped in this build env (end users install normally).
+- 2026-06-10: Verified live Supabase (`jlxyhxbcdvaryhusteku`) has RLS DISABLED on scans/reports/coupons with anon full CRUD (advisor `rls_disabled_in_public` ERROR ×3). Migration 002 never applied. Launch-blocker; project re-paused after read-only check.
 - 2026-05-28: Created root `README.md`; set GitHub homepage to `app-beta-fawn.vercel.app` and default branch to `master`; corrected stale `neuroedge.co.uk` live-URL claim.
 - 2026-05-23: Created `docs/health-check-2026-05-23.md` - prod outage audit. P0: `neuroedge.co.uk` DNS zone dead (Route 53 delegation broken). Includes fix plan + proposed PR list.
 - 2026-04-19: Fixed `src/industry-detector.ts` - word-boundary regex instead of substring match; added `tests/industry-detector.test.ts` (6 cases).
