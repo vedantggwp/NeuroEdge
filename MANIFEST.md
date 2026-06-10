@@ -7,7 +7,7 @@
 - `app/` - Next.js frontend. Deployed on Vercel; public URL `app-beta-fawn.vercel.app` (intended domain `neuroedge.co.uk` is DOWN — DNS zone broken, see health-check 2026-05-23).
 - `scan-service/` - Node/Fastify engine. Deployed on VPS (openclaw) behind Caddy.
 - `mcp-server/` - Open-source, standalone MCP server (BYO-AI accessibility auditor). Self-contained; no Supabase/LLM deps. Stdio transport.
-- `supabase/` - DB migrations (`001_initial.sql`, `002_add_columns_rls_indexes.sql`). NOTE: as of 2026-06-10, live DB has RLS DISABLED + anon full CRUD — migration 002 never applied (launch-blocker).
+- `supabase/` - DB migrations (`001_initial.sql`, `002_*.sql`, `003_lockdown_rls.sql`). `003` applied to live DB 2026-06-10: revokes all anon/authenticated grants + enables RLS (closed the world-writable/PII-readable hole). Anon now has zero table access; all app reads go server-side via service role.
 - `docs/` - Plans, playbooks, audit reports.
 - `brand/`, `concepts/`, `PitchDeck/` - Pitch and brand assets.
 - `video/` - Pitch video Remotion project.
@@ -43,6 +43,8 @@
 - `mcp-server/README.md` - OSS docs: BYO-AI rationale, Claude Desktop config, tool reference, security.
 
 ## Recent Changes
+- 2026-06-10: Created `supabase/migrations/003_lockdown_rls.sql` + applied to live DB — revoke anon/authenticated grants, enable RLS on scans/reports/coupons, harden `increment_coupon_usage` search_path. Verified: anon privileges `(none)`, RLS on, advisor `rls_disabled_in_public` cleared. Project re-paused.
+- 2026-06-10: Added `app/app/api/scans/[id]/route.ts` + `app/app/api/report-status/route.ts` (service-role reads); refactored `app/app/scan/[id]/page.tsx` + `app/app/report/[id]/page.tsx` to fetch via these routes instead of the anon Supabase client. Required because RLS now denies anon. NOTE: live app must be redeployed (Vercel) for results/report pages to work against the locked DB.
 - 2026-06-10: Created `mcp-server/` - open-source, standalone MCP server wrapping the scan engine (BYO-AI). One tool `neuroedge_scan_website`; SSRF-hardened (IPv6 + redirect re-validation); 37 tests pass; built + stdio handshake verified. Chromium download skipped in this build env (end users install normally).
 - 2026-06-10: Verified live Supabase (`jlxyhxbcdvaryhusteku`) has RLS DISABLED on scans/reports/coupons with anon full CRUD (advisor `rls_disabled_in_public` ERROR ×3). Migration 002 never applied. Launch-blocker; project re-paused after read-only check.
 - 2026-05-28: Created root `README.md`; set GitHub homepage to `app-beta-fawn.vercel.app` and default branch to `master`; corrected stale `neuroedge.co.uk` live-URL claim.

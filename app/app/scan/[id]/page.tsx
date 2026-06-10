@@ -1,7 +1,6 @@
 "use client";
 
 import { use, useState, useEffect, useCallback } from "react";
-import { getSupabase } from "@/lib/supabase";
 import { ScanProgress } from "@/components/ScanProgress";
 import { ScoreRing } from "@/components/ScoreRing";
 import { IssueList } from "@/components/IssueList";
@@ -46,19 +45,16 @@ export default function ScanResultsPage({
   const [revenueLoading, setRevenueLoading] = useState(false);
 
   const fetchScan = useCallback(async () => {
-    const { data, error } = await getSupabase()
-      .from("scans")
-      .select("id, url, score, total_violations, top_issues, created_at")
-      .eq("id", id)
-      .single();
+    const res = await fetch(`/api/scans/${id}`);
 
-    if (error || !data) {
+    if (!res.ok) {
       setErrorMsg("Scan not found. It may still be processing or the link is invalid.");
       setState("error");
       return;
     }
 
-    setScan(data as ScanData);
+    const data = (await res.json()) as ScanData;
+    setScan(data);
     setState("ready");
   }, [id]);
 
