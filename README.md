@@ -48,7 +48,7 @@ An optional `x-api-key` header gates the service. Full contract in [`scan-servic
 ## Tech stack
 
 - **Frontend:** Next.js (App Router, TypeScript), Tailwind, Stripe.
-- **Engine:** Fastify, Puppeteer, axe-core, Anthropic (LLM translation), Resend (email).
+- **Engine:** Fastify, Puppeteer, axe-core, LLM translation (Gemini in production; provider set via `LLM_PROVIDER`), Resend (email).
 - **Data:** Supabase (Postgres + RLS).
 - **Design system:** "Clean Authority" — see [`DESIGN-BRIEF.md`](DESIGN-BRIEF.md).
 
@@ -71,7 +71,7 @@ Copy the env templates in each package and fill in keys (Supabase, Stripe, Anthr
 
 ## Deployment notes
 
-- **Frontend** auto-deploys to Vercel. The bare deployment-specific `*.vercel.app` URLs are auth-walled by Vercel Deployment Protection; the `app-beta-fawn.vercel.app` alias is the public entry point.
+- **Frontend** deploys to Vercel (project `app`): run `vercel --prod` from `app/`; the `app-beta-fawn.vercel.app` alias tracks the latest production deployment. GitHub auto-deploy is **not** currently wired, so a merge to `master` does not publish on its own — deploy manually.
 - **scan-service** runs on a VPS behind Caddy (`scan.neuroedge.co.uk → localhost:3001`).
 - Production is currently degraded — see the health check linked above before assuming a URL is reachable.
 
