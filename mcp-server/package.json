@@ -1,0 +1,61 @@
+{
+  "name": "neuroedge-mcp-server",
+  "version": "0.1.0",
+  "description": "Open-source MCP server that gives any AI a website accessibility auditor. Runs axe-core in headless Chromium and returns structured WCAG findings for the host model to explain in plain English. Bring your own AI.",
+  "type": "module",
+  "license": "MIT",
+  "author": "NeuroEdge",
+  "homepage": "https://github.com/vedantggwp/NeuroEdge/tree/master/mcp-server#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vedantggwp/NeuroEdge.git",
+    "directory": "mcp-server"
+  },
+  "bugs": {
+    "url": "https://github.com/vedantggwp/NeuroEdge/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "dist/index.js",
+  "bin": {
+    "neuroedge-mcp": "dist/index.js"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build && npm test",
+    "start": "node dist/index.js",
+    "dev": "tsx watch src/index.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "accessibility",
+    "a11y",
+    "wcag",
+    "axe-core",
+    "audit"
+  ],
+  "dependencies": {
+    "@axe-core/puppeteer": "^4.11.1",
+    "@modelcontextprotocol/sdk": "^1.20.0",
+    "axe-core": "^4.11.1",
+    "puppeteer": "^24.40.0",
+    "zod": "^3.25.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.0"
+  }
+}

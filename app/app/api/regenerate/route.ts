@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 interface RegenerateRequestBody {
   reportId?: string;
@@ -7,6 +8,16 @@ interface RegenerateRequestBody {
 }
 
 export async function POST(req: NextRequest) {
+  const clientIp =
+    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+  const rateCheck = checkRateLimit(`regenerate:${clientIp}`, 20, 60_000);
+  if (!rateCheck.allowed) {
+    return NextResponse.json(
+      { error: "Too many requests. Please wait a minute and try again." },
+      { status: 429 },
+    );
+  }
+
   let body: RegenerateRequestBody;
   try {
     body = (await req.json()) as RegenerateRequestBody;

@@ -2,7 +2,6 @@
 
 import { use, useState, useEffect, useCallback, useRef } from "react";
 import { useSearchParams } from "next/navigation";
-import { getSupabase } from "@/lib/supabase";
 import { CONTACT_EMAIL } from "@/lib/constants";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -289,36 +288,31 @@ export default function ReportStatusPage({
   const fetchBySessionId = useCallback(async (): Promise<ReportRecord | null> => {
     if (!sessionId) return null;
 
-    const { data, error } = await getSupabase()
-      .from("reports")
-      .select("id, scan_id, email, status, sent_at, created_at")
-      .eq("stripe_session_id", sessionId)
-      .eq("scan_id", scanId)
-      .single();
+    const res = await fetch("/api/report-status", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ scanId, sessionId }),
+    });
+    if (!res.ok) return null;
 
-    if (error || !data) {
-      // Report may not exist yet (webhook hasn't fired) — keep polling
-      return null;
-    }
-
-    return data as ReportRecord;
+    // Report may not exist yet (webhook hasn't fired) — `report` is null; keep polling
+    const { report } = (await res.json()) as { report: ReportRecord | null };
+    return report;
   }, [sessionId, scanId]);
 
   // ── Fetch report by email + scan_id ─────────────────────────────────────
 
   const fetchByEmail = useCallback(
     async (email: string) => {
-      const { data, error } = await getSupabase()
-        .from("reports")
-        .select("id, scan_id, email, status, sent_at, created_at")
-        .eq("scan_id", scanId)
-        .eq("email", email)
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .single();
+      const res = await fetch("/api/report-status", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ scanId, email }),
+      });
+      if (!res.ok) return null;
 
-      if (error || !data) return null;
-      return data as ReportRecord;
+      const { report } = (await res.json()) as { report: ReportRecord | null };
+      return report;
     },
     [scanId],
   );
@@ -470,16 +464,17 @@ export default function ReportStatusPage({
       if (pollingRef.current) clearInterval(pollingRef.current);
       const reportId = pageState.report.id;
       pollingRef.current = setInterval(async () => {
-        const { data } = await getSupabase()
-          .from("reports")
-          .select("id, scan_id, email, status, sent_at, created_at")
-          .eq("id", reportId)
-          .single();
+        const res = await fetch("/api/report-status", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ reportId }),
+        });
+        if (!res.ok) return;
 
-        if (data) {
-          const updated = data as ReportRecord;
-          setPageState({ phase: "found", report: updated });
-          if (!ACTIVE_STATUSES.has(updated.status)) {
+        const { report } = (await res.json()) as { report: ReportRecord | null };
+        if (report) {
+          setPageState({ phase: "found", report });
+          if (!ACTIVE_STATUSES.has(report.status)) {
             if (pollingRef.current) {
               clearInterval(pollingRef.current);
               pollingRef.current = null;

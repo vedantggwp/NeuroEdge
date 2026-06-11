@@ -41,9 +41,19 @@ app/.next/
 scan-service/node_modules/
 scan-service/dist/
 
+# Allow MCP server (open-source, BYO-AI accessibility auditor)
+!mcp-server/
+!mcp-server/**
+mcp-server/node_modules/
+mcp-server/dist/
+
 # Allow Supabase
 !supabase/
 !supabase/**
+
+# Allow GitHub Actions
+!.github/
+!.github/**
 
 # Environment files (never commit)
 **/.env

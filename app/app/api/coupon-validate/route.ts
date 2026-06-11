@@ -1,11 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 interface ValidateBody {
   couponCode?: string;
 }
 
 export async function POST(req: NextRequest) {
+  const clientIp =
+    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+  const rateCheck = checkRateLimit(`coupon-validate:${clientIp}`, 20, 60_000);
+  if (!rateCheck.allowed) {
+    return NextResponse.json(
+      { error: "Too many requests. Please wait a minute and try again." },
+      { status: 429 },
+    );
+  }
+
   let body: ValidateBody;
   try {
     body = (await req.json()) as ValidateBody;
