@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getClientIp } from "@/lib/client-ip";
 import { timingSafeEqual } from "node:crypto";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { issueToken } from "@/lib/admin-auth";
 
 export async function POST(req: NextRequest) {
-  const clientIp =
-    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+  const clientIp = getClientIp(req);
   const rateCheck = checkRateLimit(`admin-login:${clientIp}`, 5, 900_000);
   if (!rateCheck.allowed) {
     return NextResponse.json(

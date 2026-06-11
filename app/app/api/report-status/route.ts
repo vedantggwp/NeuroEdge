@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { getClientIp } from "@/lib/client-ip";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit } from "@/lib/rate-limit";
 
@@ -20,8 +21,7 @@ interface ReportStatusBody {
 const REPORT_COLUMNS = "id, scan_id, email, status, sent_at, created_at";
 
 export async function POST(req: Request) {
-  const clientIp =
-    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+  const clientIp = getClientIp(req);
   if (!checkRateLimit(`report-status:${clientIp}`, 30, 60_000).allowed) {
     return NextResponse.json(
       { error: "Too many requests. Please wait a moment and try again." },

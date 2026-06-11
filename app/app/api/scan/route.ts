@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { getClientIp } from "@/lib/client-ip";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit } from "@/lib/rate-limit";
 
@@ -6,7 +7,7 @@ const SCAN_SERVICE_URL = process.env.SCAN_SERVICE_URL ?? "";
 const SCAN_TIMEOUT_MS = 60_000;
 
 export async function POST(req: Request) {
-  const clientIp = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+  const clientIp = getClientIp(req);
   const rateCheck = checkRateLimit(clientIp, 5, 60_000);
   if (!rateCheck.allowed) {
     return NextResponse.json(

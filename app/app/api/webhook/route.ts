@@ -99,8 +99,14 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ received: true });
       }
       console.error("Webhook: failed to insert report record:", insertError);
-      // Return 200 anyway — Stripe will not retry on 5xx if we've already processed
-      return NextResponse.json({ received: true });
+      // Genuine insert failure (NOT a 23505 idempotency hit) — return 500 so
+      // Stripe retries delivery. The pre-insert lookup + the 23505 guard above
+      // make retries safe (no duplicate report, no double coupon increment), so
+      // a 200 here would silently drop a *paid* report with no recovery.
+      return NextResponse.json(
+        { error: "Failed to persist report" },
+        { status: 500 },
+      );
     }
 
     // Confirmed brand-new insert — increment coupon usage exactly once.
