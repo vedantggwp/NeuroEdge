@@ -45,6 +45,37 @@ export async function POST(req: NextRequest) {
 
     const db = createServerClient();
 
+    // Idempotency guard. Stripe delivers webhooks at-least-once, so the same
+    // `checkout.session.completed` can arrive multiple times. We must insert the
+    // report and increment the coupon EXACTLY once per Stripe session.
+    //
+    // Two layers, robust across deployment states:
+    //   1. Pre-insert lookup — works even where migration 004 (the UNIQUE
+    //      constraint) has not been applied yet (self-hosters / not-yet-migrated).
+    //   2. Unique-violation (Postgres 23505) handling on insert — closes the
+    //      concurrent-retry race once the constraint exists, since two
+    //      simultaneous retries can both pass the lookup before either inserts.
+    const { data: existing, error: lookupError } = await db
+      .from("reports")
+      .select("id")
+      .eq("stripe_session_id", session.id)
+      .maybeSingle();
+
+    if (lookupError) {
+      console.error("Webhook: failed to look up existing report:", lookupError);
+      // Don't insert on an ambiguous read — a transient read failure must not
+      // cause a duplicate insert + double coupon increment. Stripe will retry.
+      return NextResponse.json(
+        { error: "Failed to verify report state" },
+        { status: 500 },
+      );
+    }
+
+    if (existing) {
+      // Already processed this Stripe session — no insert, no increment.
+      return NextResponse.json({ received: true });
+    }
+
     const { data: report, error: insertError } = await db
       .from("reports")
       .insert({
@@ -62,9 +93,24 @@ export async function POST(req: NextRequest) {
       .single();
 
     if (insertError || !report) {
+      // Unique violation = a concurrent retry won the race and already inserted
+      // this session. Treat as already-processed: no increment, no regeneration.
+      if (insertError?.code === "23505") {
+        return NextResponse.json({ received: true });
+      }
       console.error("Webhook: failed to insert report record:", insertError);
       // Return 200 anyway — Stripe will not retry on 5xx if we've already processed
       return NextResponse.json({ received: true });
+    }
+
+    // Confirmed brand-new insert — increment coupon usage exactly once.
+    if (couponCode && typeof couponCode === "string" && couponCode.length > 0) {
+      const { error: rpcError } = await db.rpc("increment_coupon_usage", {
+        coupon_code: couponCode,
+      });
+      if (rpcError) {
+        console.error("Webhook: failed to increment coupon usage:", rpcError);
+      }
     }
 
     const scanServiceUrl = process.env.SCAN_SERVICE_URL;

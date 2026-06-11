@@ -1,0 +1,64 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  mcp-server:
+    name: mcp-server
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: mcp-server/package-lock.json
+      - name: Install dependencies
+        run: cd mcp-server && npm ci
+      - name: Typecheck
+        run: cd mcp-server && npm run typecheck
+      - name: Test
+        run: cd mcp-server && npm test
+      - name: Build
+        run: cd mcp-server && npm run build
+
+  scan-service:
+    name: scan-service
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: scan-service/package-lock.json
+      - name: Install dependencies
+        env:
+          PUPPETEER_SKIP_DOWNLOAD: "true"
+        run: cd scan-service && npm ci
+      - name: Typecheck
+        run: cd scan-service && npx tsc --noEmit
+      - name: Test
+        run: cd scan-service && npx vitest run
+
+  app:
+    name: app
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: app/package-lock.json
+      - name: Install dependencies
+        run: cd app && npm ci
+      - name: Build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: "https://example.supabase.co"
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: "dummy"
+          SUPABASE_SERVICE_ROLE_KEY: "dummy"
+          NEXT_PUBLIC_APP_URL: "https://example.com"
+        run: cd app && npx next build

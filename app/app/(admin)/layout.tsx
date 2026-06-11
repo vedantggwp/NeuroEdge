@@ -1,4 +1,5 @@
 import { cookies } from "next/headers";
+import { verifyToken } from "@/lib/admin-auth";
 
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD ?? "";
 const COOKIE_NAME = "neuroedge-admin";
@@ -11,7 +12,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const cookieStore = await cookies();
   const token = cookieStore.get(COOKIE_NAME)?.value;
 
-  if (token !== ADMIN_PASSWORD) {
+  if (!verifyToken(token)) {
     return <AdminLogin />;
   }
 

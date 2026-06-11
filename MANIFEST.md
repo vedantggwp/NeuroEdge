@@ -7,7 +7,7 @@
 - `app/` - Next.js frontend. Deployed on Vercel; public URL `app-beta-fawn.vercel.app` (intended domain `neuroedge.co.uk` is DOWN — DNS zone broken, see health-check 2026-05-23).
 - `scan-service/` - Node/Fastify engine. Deployed on VPS (openclaw) behind Caddy.
 - `mcp-server/` - Open-source, standalone MCP server (BYO-AI accessibility auditor). Self-contained; no Supabase/LLM deps. Stdio transport.
-- `supabase/` - DB migrations (`001_initial.sql`, `002_*.sql`, `003_lockdown_rls.sql`). `003` applied to live DB 2026-06-10: revokes all anon/authenticated grants + enables RLS (closed the world-writable/PII-readable hole). Anon now has zero table access; all app reads go server-side via service role.
+- `supabase/` - DB migrations (`001_initial.sql`, `002_*.sql`, `003_lockdown_rls.sql`, `004_reports_unique_session.sql`). `003` applied to live DB 2026-06-10: revokes all anon/authenticated grants + enables RLS (closed the world-writable/PII-readable hole). Anon now has zero table access; all app reads go server-side via service role. `004` NOT yet applied: adds UNIQUE on `reports.stripe_session_id` for webhook idempotency.
 - `docs/` - Plans, playbooks, audit reports.
 - `brand/`, `concepts/`, `PitchDeck/` - Pitch and brand assets.
 - `video/` - Pitch video Remotion project.
@@ -43,6 +43,14 @@
 - `mcp-server/README.md` - OSS docs: BYO-AI rationale, Claude Desktop config, tool reference, security.
 
 ## Recent Changes
+- 2026-06-11: Created `app/lib/admin-auth.ts` — HMAC-SHA256 signed token helpers (`issueToken`, `verifyToken`) replacing plaintext-password cookie (C5 fix).
+- 2026-06-11: Updated `app/app/api/admin-login/route.ts` — rate-limited (5/15 min), timing-safe password check, cookie set to signed token.
+- 2026-06-11: Updated `app/app/(admin)/layout.tsx` — verify cookie with `verifyToken()` instead of comparing raw password.
+- 2026-06-11: Updated `app/app/api/coupon-validate/route.ts`, `app/app/api/estimate/route.ts`, `app/app/api/regenerate/route.ts` — added `checkRateLimit` (20/60s) to each (C3 fix).
+- 2026-06-11: Updated `app/app/api/webhook/route.ts` — increment coupon usage once per Stripe session on `checkout.session.completed` (C4 fix for paid coupons). Idempotent via pre-insert lookup + Postgres 23505 (unique-violation) handling on insert; only increments after a confirmed brand-new insert.
+- 2026-06-11: Created `supabase/migrations/004_reports_unique_session.sql` — UNIQUE on `reports.stripe_session_id` (NULLs distinct, so 100%-off NULL-session rows unaffected) for webhook idempotency. NOT yet applied to live DB.
+- 2026-06-11: Updated `.gitignore` — allowlist `.github/` + `.github/**` so CI workflow is tracked (the default-deny `*` had hidden it).
+- 2026-06-11: Created `.github/workflows/ci.yml` — CI for mcp-server, scan-service, and app on push/PR.
 - 2026-06-10: Created `supabase/migrations/003_lockdown_rls.sql` + applied to live DB — revoke anon/authenticated grants, enable RLS on scans/reports/coupons, harden `increment_coupon_usage` search_path. Verified: anon privileges `(none)`, RLS on, advisor `rls_disabled_in_public` cleared. Project re-paused.
 - 2026-06-10: Added `app/app/api/scans/[id]/route.ts` + `app/app/api/report-status/route.ts` (service-role reads); refactored `app/app/scan/[id]/page.tsx` + `app/app/report/[id]/page.tsx` to fetch via these routes instead of the anon Supabase client. Required because RLS now denies anon. NOTE: live app must be redeployed (Vercel) for results/report pages to work against the locked DB.
 - 2026-06-10: Created `mcp-server/` - open-source, standalone MCP server wrapping the scan engine (BYO-AI). One tool `neuroedge_scan_website`; SSRF-hardened (IPv6 + redirect re-validation); 37 tests pass; built + stdio handshake verified. Chromium download skipped in this build env (end users install normally).

@@ -51,6 +51,10 @@ mcp-server/dist/
 !supabase/
 !supabase/**
 
+# Allow GitHub Actions
+!.github/
+!.github/**
+
 # Environment files (never commit)
 **/.env
 **/.env.*
