@@ -1,7 +1,8 @@
-import puppeteer, { type Browser, type Page, type HTTPRequest } from 'puppeteer';
+import puppeteer, { type Browser } from 'puppeteer';
 import { AxePuppeteer } from '@axe-core/puppeteer';
 import type { AxeResults, NodeResult, TagValue } from 'axe-core';
-import { validateUrlWithDns, checkHostSafety, isPrivateIp } from './url-validator.js';
+import { validateUrlWithDns } from './url-validator.js';
+import { guardRequest } from './request-guard.js';
 import { calculateScore } from './score.js';
 import { detectCMS } from './cms-detector.js';
 import { captureAnnotatedScreenshot } from './screenshot.js';
@@ -35,36 +36,6 @@ export interface ScanResult {
     annotated: string;
     issueCount: number;
   };
-}
-
-/**
- * Re-validate every main-frame navigation against the SSRF guard, so a public
- * URL that 302-redirects (or DNS-rebinds) to a private address is aborted
- * mid-flight. Literal-IP sub-resources are also cheaply blocked.
- */
-async function guardRequest(page: Page, req: HTTPRequest): Promise<void> {
-  try {
-    const host = new URL(req.url()).hostname;
-    const isMainNavigation = req.isNavigationRequest() && req.frame() === page.mainFrame();
-
-    if (isMainNavigation) {
-      const verdict = await checkHostSafety(host);
-      if (!verdict.valid) {
-        await req.abort('addressunreachable');
-        return;
-      }
-    } else if (host && isPrivateIp(host.replace(/^\[|\]$/g, ''))) {
-      await req.abort('addressunreachable');
-      return;
-    }
-    await req.continue();
-  } catch {
-    try {
-      await req.continue();
-    } catch {
-      /* request already handled */
-    }
-  }
 }
 
 let browser: Browser | null = null;
@@ -104,8 +75,9 @@ async function scanUrlInternal(url: string): Promise<ScanResult> {
     );
 
     await page.setRequestInterception(true);
+    const safeHosts = new Map<string, boolean>();
     page.on('request', (req) => {
-      void guardRequest(page, req);
+      void guardRequest(req, safeHosts);
     });
 
     await page.goto(validation.url, { waitUntil: 'networkidle2', timeout: 30_000 });

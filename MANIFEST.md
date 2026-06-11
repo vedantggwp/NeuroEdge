@@ -7,7 +7,7 @@
 - `app/` - Next.js frontend. Deployed on Vercel; public URL `app-beta-fawn.vercel.app` (intended domain `neuroedge.co.uk` is DOWN — DNS zone broken, see health-check 2026-05-23).
 - `scan-service/` - Node/Fastify engine. Deployed on VPS (openclaw) behind Caddy.
 - `mcp-server/` - Open-source, standalone MCP server (BYO-AI accessibility auditor). Self-contained; no Supabase/LLM deps. Stdio transport.
-- `supabase/` - DB migrations (`001_initial.sql`, `002_*.sql`, `003_lockdown_rls.sql`, `004_reports_unique_session.sql`). `003` applied to live DB 2026-06-10: revokes all anon/authenticated grants + enables RLS (closed the world-writable/PII-readable hole). Anon now has zero table access; all app reads go server-side via service role. `004` NOT yet applied: adds UNIQUE on `reports.stripe_session_id` for webhook idempotency.
+- `supabase/` - DB migrations (`001_initial.sql`, `002_*.sql`, `003_lockdown_rls.sql`, `004_reports_unique_session.sql`). `003` applied to live DB 2026-06-10: revokes all anon/authenticated grants + enables RLS (closed the world-writable/PII-readable hole). Anon now has zero table access; all app reads go server-side via service role. `004` applied to live DB 2026-06-11 (restore→apply→verify→re-pause): adds UNIQUE on `reports.stripe_session_id` (NULLs distinct) for webhook idempotency.
 - `docs/` - Plans, playbooks, audit reports.
 - `brand/`, `concepts/`, `PitchDeck/` - Pitch and brand assets.
 - `video/` - Pitch video Remotion project.
@@ -15,7 +15,8 @@
 
 ### scan-service
 - `scan-service/src/server.ts` - Fastify app. Routes: `POST /api/scan`, `POST /api/generate-report`, `GET /health`. Optional `x-api-key` header gate.
-- `scan-service/src/scanner.ts` - Puppeteer + axe-core runner. Returns score, violations (with sampleNodes), CMS, screenshots.
+- `scan-service/src/scanner.ts` - Puppeteer + axe-core runner. Returns score, violations (with sampleNodes), CMS, screenshots. Delegates per-request SSRF interception to `request-guard.ts`.
+- `scan-service/src/request-guard.ts` - SSRF guard for Puppeteer requests: validates every http(s) request (nav, redirect, AND sub-resource) via DNS-resolving `checkHostSafety`; fails CLOSED; per-scan host cache. Extracted from scanner.ts 2026-06-11.
 - `scan-service/src/industry-detector.ts` - Schema.org + keyword-based industry classification. Word-boundary regex matching (fixed 2026-04-19).
 - `scan-service/src/score.ts` - Accessibility score formula. Pass-ratio 60% + deduction penalty 40% using hyperbolic curve `d / (d + k*R)` (fixed 2026-04-19).
 - `scan-service/src/translator.ts` - LLM plain-English + business-impact translation. Local source is Anthropic-only; VPS runs a multi-provider patched version.
@@ -43,6 +44,10 @@
 - `mcp-server/README.md` - OSS docs: BYO-AI rationale, Claude Desktop config, tool reference, security.
 
 ## Recent Changes
+- 2026-06-11: Created `scan-service/src/request-guard.ts` + `tests/request-guard.test.ts` — extracted SSRF guard from scanner.ts; now validates EVERY http(s) request (sub-resources too, DNS-resolved), fails CLOSED, per-host cache. 7 unit tests. Closes sub-resource SSRF + fail-open holes from the PR #1 review. (DNS-rebind IP-pinning still tracked as a follow-up — needs an integration harness.)
+- 2026-06-11: Created `app/lib/client-ip.ts` (`getClientIp`) — derives client IP from `x-real-ip` / last XFF hop, not the spoofable left-most `x-forwarded-for`; adopted across all 6 rate-limited routes (admin-login, scan, coupon-validate, estimate, regenerate, report-status).
+- 2026-06-11: Updated `app/app/api/webhook/route.ts` — return 500 on non-23505 insert failures so Stripe retries (a 200 silently dropped a *paid* report).
+- 2026-06-11: Applied `supabase/migrations/004_reports_unique_session.sql` to live DB — `reports_stripe_session_id_key UNIQUE (stripe_session_id)` live, old index dropped, table empty; project re-paused.
 - 2026-06-11: Created `app/lib/admin-auth.ts` — HMAC-SHA256 signed token helpers (`issueToken`, `verifyToken`) replacing plaintext-password cookie (C5 fix).
 - 2026-06-11: Updated `app/app/api/admin-login/route.ts` — rate-limited (5/15 min), timing-safe password check, cookie set to signed token.
 - 2026-06-11: Updated `app/app/(admin)/layout.tsx` — verify cookie with `verifyToken()` instead of comparing raw password.

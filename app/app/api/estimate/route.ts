@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getClientIp } from "@/lib/client-ip";
 import { createServerClient } from "@/lib/supabase";
 import { calculateRevenueUplift, type RevenueInput } from "@/lib/revenue";
 import { checkRateLimit } from "@/lib/rate-limit";
@@ -29,8 +30,7 @@ function isValidBody(body: unknown): body is EstimateRequestBody {
 }
 
 export async function POST(req: NextRequest) {
-  const clientIp =
-    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+  const clientIp = getClientIp(req);
   const rateCheck = checkRateLimit(`estimate:${clientIp}`, 20, 60_000);
   if (!rateCheck.allowed) {
     return NextResponse.json(
