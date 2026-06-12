@@ -6,7 +6,6 @@ import { ScoreRing } from "@/components/ScoreRing";
 import { IssueList } from "@/components/IssueList";
 import { RevenueForm } from "@/components/RevenueForm";
 import { RevenueResult } from "@/components/RevenueResult";
-import { ReportCTA } from "@/components/ReportCTA";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { calculateRevenueUplift, type RevenueEstimate } from "@/lib/revenue";
@@ -194,15 +193,6 @@ export default function ScanResultsPage({
             />
           )}
         </Card>
-      </section>
-
-      {/* Report CTA */}
-      <section
-        aria-labelledby="report-heading"
-        className="animate-fade-up mt-16"
-        style={{ animationDelay: "600ms" }}
-      >
-        <ReportCTA scanId={id} />
       </section>
     </main>
   );

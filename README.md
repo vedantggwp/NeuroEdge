@@ -1,80 +1,75 @@
 # NeuroEdge
 
-> AI-powered website accessibility audit tool for UK small businesses.
+> Open-source website accessibility scanner. Enter a URL, get a WCAG score and a plain-English, prioritised fix list — in about 30 seconds.
 
-NeuroEdge scans a website, scores its accessibility against [axe-core](https://github.com/dequelabs/axe-core) rules, and translates the technical violations into plain-English, business-impact language — plus a downloadable PDF "fix kit" that separates issues you can fix yourself from issues to hand to a developer.
+NeuroEdge loads a page in headless Chromium, runs [axe-core](https://github.com/dequelabs/axe-core) against it, scores the result, and turns the technical violations into plain-English findings ranked by what to fix first. Two ways to use it:
 
-**Live (current public URL):** https://app-beta-fawn.vercel.app
+- **Hosted demo** — **https://app-beta-fawn.vercel.app** — free, no sign-up (rate-limited for demo use).
+- **MCP server** — [`mcp-server/`](mcp-server/) — a standalone, dependency-light server that gives *any* MCP-compatible AI (Claude Desktop, Cursor, …) an accessibility-audit tool. No API keys, no server-side LLM: the host model explains the findings. **Bring your own AI.** (Publishable to npm as `neuroedge-mcp-server`.)
 
-> ⚠️ The intended canonical domain `neuroedge.co.uk` is **down** — its Route 53 DNS zone delegation is broken (P0). The Vercel alias above is the working public URL until DNS is restored. See [`docs/health-check-2026-05-23.md`](docs/health-check-2026-05-23.md) for the full diagnosis and recovery plan.
+> This is a portfolio / demonstration project, hosted for limited demo use — not a commercial service. It is fully open source.
 
 ---
 
-## What it does
+## How it works
 
-1. A visitor enters a website URL on the frontend.
-2. The **scan-service** loads the page in headless Chromium (Puppeteer), runs axe-core, fingerprints the CMS, classifies the industry, and captures annotated screenshots of each violation.
-3. Violations are scored (pass-ratio 60% + deduction penalty 40%) and translated by an LLM into plain-English findings with business impact.
-4. The visitor sees a score ring and ranked issues; an optional paid report generates a branded PDF fix kit delivered by email.
+1. You enter a website URL.
+2. The **scan-service** loads the page in headless Chromium (Puppeteer), runs axe-core, and fingerprints the CMS.
+3. Violations are scored (pass-ratio 60% + a hyperbolic deduction penalty 40%) and ranked by impact.
+4. You get a score ring, a prioritised issue list with fix guidance, and an optional revenue-impact estimate — all on one page, free.
 
 ## Architecture
 
-This is a monorepo with three deployable parts plus supporting assets.
+A monorepo with three deployable parts:
 
 | Directory | What it is | Where it runs |
 |---|---|---|
-| [`app/`](app/) | Next.js frontend + API routes (Stripe checkout, report status, admin). | Vercel |
-| [`scan-service/`](scan-service/) | Node/Fastify engine: Puppeteer + axe-core scanner, scoring, LLM translation, PDF, email. | VPS (Caddy reverse proxy) |
-| [`supabase/`](supabase/) | Postgres migrations (RLS, indexes). | Supabase |
-| `docs/` | Plans, playbooks, audit & health-check reports. | — |
-| `brand/`, `concepts/`, `PitchDeck/`, `video/` | Pitch and brand assets. | — |
+| [`app/`](app/) | Next.js frontend + API routes (scan, results, revenue estimate). | Vercel |
+| [`scan-service/`](scan-service/) | Node/Fastify engine: Puppeteer + axe-core scanner, scoring, SSRF-hardened URL guard. | VPS (Caddy → `:3001`, `neuroedge-scan` systemd unit) |
+| [`mcp-server/`](mcp-server/) | Standalone MCP server exposing the scanner as one tool (`neuroedge_scan_website`). | Anywhere (stdio) |
+| [`supabase/`](supabase/) | Postgres migrations (RLS lockdown + indexes). | Supabase |
 
 ```
 visitor → app (Next.js / Vercel) → scan-service (Fastify / VPS) → Puppeteer + axe-core
                                           ↓
-                              Supabase (results)  ·  Resend (email)  ·  Stripe (payment)
+                                   Supabase (scan results)
 ```
 
-### scan-service API
-
-| Route | Purpose |
-|---|---|
-| `POST /api/scan` | Run an accessibility scan; returns score, violations, CMS, screenshots. |
-| `POST /api/generate-report` | Build and email the PDF fix kit. |
-| `GET /health` | Liveness check. |
-
-An optional `x-api-key` header gates the service. Full contract in [`scan-service/ENGINE.md`](scan-service/ENGINE.md).
+The scan-service is **SSRF-hardened**: every request it makes (navigation, redirect hop, and sub-resource) is DNS-resolved and aborted if it targets a private/reserved address. Full contract in [`scan-service/ENGINE.md`](scan-service/ENGINE.md).
 
 ## Tech stack
 
-- **Frontend:** Next.js (App Router, TypeScript), Tailwind, Stripe.
-- **Engine:** Fastify, Puppeteer, axe-core, LLM translation (Gemini in production; provider set via `LLM_PROVIDER`), Resend (email).
-- **Data:** Supabase (Postgres + RLS).
-- **Design system:** "Clean Authority" — see [`DESIGN-BRIEF.md`](DESIGN-BRIEF.md).
+- **Frontend:** Next.js (App Router, TypeScript), Tailwind.
+- **Engine:** Fastify, Puppeteer, axe-core; optional plain-English LLM translation (Gemini in production, set via `LLM_PROVIDER`).
+- **Data:** Supabase (Postgres + Row-Level Security).
+- **MCP server:** `@modelcontextprotocol/sdk`, axe-core, Puppeteer.
 
 ## Local development
 
 ```bash
 # Frontend
-cd app
-npm install
-npm run dev            # http://localhost:3000
+cd app && npm install && npm run dev            # http://localhost:3000
 
 # Scan engine (separate terminal)
-cd scan-service
-npm install
-npm run dev            # http://localhost:3001
-npm test               # Vitest unit tests
+cd scan-service && npm install && npm run dev    # http://localhost:3001
+npm test                                         # Vitest
+
+# MCP server
+cd mcp-server && npm install && npm test
 ```
 
-Copy the env templates in each package and fill in keys (Supabase, Stripe, Anthropic, Resend) before running. The frontend expects the scan-service URL via env.
+Copy each package's env template and fill in keys (Supabase; optionally Gemini/Resend for the engine). The frontend reads the scan-service URL from `SCAN_SERVICE_URL`.
 
-## Deployment notes
+## Deployment
 
-- **Frontend** deploys to Vercel (project `app`): run `vercel --prod` from `app/`; the `app-beta-fawn.vercel.app` alias tracks the latest production deployment. GitHub auto-deploy is **not** currently wired, so a merge to `master` does not publish on its own — deploy manually.
-- **scan-service** runs on a VPS behind Caddy (`scan.neuroedge.co.uk → localhost:3001`).
-- Production is currently degraded — see the health check linked above before assuming a URL is reachable.
+- **Frontend** → Vercel (project `app`): `vercel --prod` from `app/`. The `app-beta-fawn.vercel.app` alias tracks the latest production deploy. (No GitHub auto-deploy — publish manually.)
+- **scan-service** → VPS behind Caddy (`:80 → localhost:3001`), managed by the `neuroedge-scan` systemd unit.
+- **mcp-server** → `npm publish` (dist-only, MIT), then `npx neuroedge-mcp-server` or add to your MCP host config.
 
 ## Repository map
 
-See [`MANIFEST.md`](MANIFEST.md) for a file-by-file index of the codebase.
+See [`MANIFEST.md`](MANIFEST.md) for a file-by-file index.
+
+## License
+
+MIT (see [`mcp-server/LICENSE`](mcp-server/LICENSE)).
