@@ -3,7 +3,8 @@
 ## Key Files
 
 ### Top level
-- `README.md` - Root project README (product overview, architecture, local dev, deploy status).
+- `README.md` - Root project README (OSS-demo overview, architecture, local dev, deploy).
+- `CHANGELOG.md` - Project history, newest first (Keep a Changelog style) with an "Ops" lane for live-infra changes (deploys, migrations).
 - `app/` - Next.js frontend: free scan → results → revenue estimate (paid checkout/report/admin REMOVED 2026-06-13 — now a free OSS demo). Deployed on Vercel project `app`; canonical URL `app-beta-fawn.vercel.app`. (There is no `neuroedge.co.uk` — it was always a Vercel-only deployment, never a real domain.)
 - `scan-service/` - Node/Fastify engine. Deployed on VPS (openclaw) behind Caddy.
 - `mcp-server/` - Open-source, standalone MCP server (BYO-AI accessibility auditor). Self-contained; no Supabase/LLM deps. Stdio transport.
@@ -44,6 +45,7 @@
 - `mcp-server/README.md` - OSS docs: BYO-AI rationale, Claude Desktop config, tool reference, security.
 
 ## Recent Changes
+- 2026-06-13: docs — added `CHANGELOG.md` (full project history, Keep-a-Changelog style with an Ops lane); refreshed `scan-service/ENGINE.md` (systemd `neuroedge-scan` supervision, 2026-06-12 SSRF surgical deploy, marked `/api/generate-report` legacy/unused); README repo-map links the changelog.
 - 2026-06-13: Pivoted to a **free open-source demo** — REMOVED the entire paid subsystem: `app/app/(admin)/`, `app/app/api/{checkout,webhook,coupon-validate,admin-login,regenerate,report-status}`, `app/app/report/[id]`, `app/components/ReportCTA.tsx`, `app/lib/{admin-auth,stripe}.ts`, and the `stripe`/`@stripe/stripe-js` deps. Stripped the `ReportCTA` paywall from `scan/[id]/page.tsx`. App is now scan → results only; `next build` green (routes: `/`, `/scan/[id]`, `/api/{scan,scans/[id],estimate}`, static). Rewrote README as an OSS-demo doc and corrected the `neuroedge.co.uk` myth (it never existed; `app-beta-fawn.vercel.app` is canonical).
 - 2026-06-11: Created `scan-service/src/request-guard.ts` + `tests/request-guard.test.ts` — extracted SSRF guard from scanner.ts; now validates EVERY http(s) request (sub-resources too, DNS-resolved), fails CLOSED, per-host cache. 7 unit tests. Closes sub-resource SSRF + fail-open holes from the PR #1 review. (DNS-rebind IP-pinning still tracked as a follow-up — needs an integration harness.)
 - 2026-06-11: Created `app/lib/client-ip.ts` (`getClientIp`) — derives client IP from `x-real-ip` / last XFF hop, not the spoofable left-most `x-forwarded-for`; adopted across all 6 rate-limited routes (admin-login, scan, coupon-validate, estimate, regenerate, report-status).

@@ -1,6 +1,6 @@
 # NeuroEdge Scan Engine
 
-Fastify service that runs axe-core via Puppeteer, translates violations into plain English, and emails a PDF report.
+Fastify service that runs axe-core via Puppeteer and returns scored, structured accessibility findings. (It also carries legacy plain-English translation + PDF/email report code — unused since the product went free/OSS on 2026-06-13; see `/api/generate-report` below.)
 
 ## API
 
@@ -34,8 +34,8 @@ Response (200):
 ```
 Errors: 400 (URL required), 422 (scan failed), 429 (>5 concurrent).
 
-### POST /api/generate-report
-Request: `{ "reportId": "<uuid>" }`. Looks up `reports` and `scans` rows in Supabase, runs the translator, generates a PDF, sends via Resend, and marks the report `sent` or `failed`.
+### POST /api/generate-report (legacy — unused in the free demo)
+Request: `{ "reportId": "<uuid>" }`. Looks up `reports` and `scans` rows in Supabase, runs the translator, generates a PDF, sends via Resend, and marks the report `sent` or `failed`. The paid flow that triggered this (Stripe webhook) was removed on 2026-06-13 — the route still exists but nothing in the app calls it.
 
 ### GET /health
 `{"status": "ok"}`. Bypasses API key check.
@@ -81,16 +81,13 @@ axe-core returns one entry per failing element with `target` (CSS selector), `ht
 
 ## Deployment notes (VPS: openclaw)
 
-- Code lives in `/opt/neuroedge/scan-service/`.
-- Service is started with `nohup node dist/server.js` - no supervisor. Restart manually after deploy.
-- Caddy (`/etc/caddy/Caddyfile`) reverse-proxies `:80` to `localhost:3001`.
-- Log file: `/var/log/neuroedge-scan.log`.
-- Current process binds `0.0.0.0:3001` - Caddy fronts it but the port is also directly reachable on the public IP. Firewall or bind to loopback when revisiting.
+- Code lives in `/opt/neuroedge/scan-service/` (deployed by copy/scp — NOT a git checkout). Node is `/usr/bin/node` (v22).
+- Managed by the **`neuroedge-scan` systemd unit** (auto-restart on failure, boot-start; sources `.env` then `exec node dist/server.js`; logs to `/var/log/neuroedge-scan.log`). Manage with `systemctl {status,restart,stop} neuroedge-scan`. (Before 2026-06-12 it was a hand-started `nohup` process with no supervisor — a reboot would have left it down.)
+- Caddy (`/etc/caddy/Caddyfile`) reverse-proxies `:80` → `localhost:3001`. The Vercel app reaches the engine at `http://65.21.185.228` (the VPS IPv4); the port is intentionally public so Vercel's server-side fetch can call it.
 
-### Known drift between source and VPS
-- VPS `dist/translator.js` was hand-patched to support Anthropic + OpenAI + Gemini + GitHub Models. Local `src/translator.ts` is single-provider Anthropic. Do not rebuild-and-deploy `translator.js` until source is reconciled - it will break report generation since VPS only has `GEMINI_API_KEY` set.
-- VPS `dist/server.js` does not include the API_KEY middleware or the `reports.scan_id` schema. Deploying the current `src/server.ts` requires the DB migration that adds `reports.scan_id` and `scans.cms` columns - confirm migrations are applied before shipping.
-- Last surgical deploy (2026-04-19): industry-detector, score, scanner, cms-detector, screenshot only. translator and server left alone.
+### TRANSLATOR LANDMINE — surgical deploys only
+- VPS `dist/translator.js` is a hand-patched multi-provider build (Anthropic + OpenAI + Gemini + GitHub Models); local `src/translator.ts` is Anthropic-only, and the VPS only has `GEMINI_API_KEY`. **Never blanket-overwrite the VPS scan-service with master** — it clobbers the Gemini translator and breaks translation. Deploy ONLY the specific changed `dist/*.js` (+ matching `src/*.ts`), back up first, then `systemctl restart neuroedge-scan`.
+- Last surgical deploy (2026-06-12): shipped the SSRF hardening — `url-validator.js`, `scanner.js`, and the new `request-guard.js` (validates every http(s) request — nav, redirect, sub-resource — via a DNS-resolving host check; fails closed). Verified live: `POST /api/scan {"url":"http://test.localtest.me/"}` → rejected `"Hostname resolves to a private or reserved address"`. Prior surgical deploy: 2026-04-19 (score/industry/cms/screenshot only).
 
 ## Tests
 
