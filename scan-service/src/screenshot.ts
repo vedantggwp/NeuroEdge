@@ -47,8 +47,8 @@ export async function captureAnnotatedScreenshot(
           selector,
           boundingBox: box,
         });
-      } catch {
-        // Element might not be queryable, skip
+      } catch (err) {
+        console.warn(`Could not query element "${selector}":`, err instanceof Error ? err.message : err);
       }
     }
   }

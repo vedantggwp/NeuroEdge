@@ -72,8 +72,9 @@ async function guardRequest(page: Page, req: HTTPRequest): Promise<void> {
     }
     await req.continue();
   } catch {
+    // Fail closed — abort unvalidated requests rather than letting them through.
     try {
-      await req.continue();
+      await req.abort('addressunreachable');
     } catch {
       /* request already handled */
     }

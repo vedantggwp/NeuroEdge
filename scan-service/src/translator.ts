@@ -152,8 +152,8 @@ export async function translateViolations(
     if (validateTranslation(parsed)) {
       return parsed.issues;
     }
-  } catch {
-    // fall through to retry
+  } catch (error) {
+    console.error('LLM translation attempt 1 failed:', error instanceof Error ? error.message : error);
   }
 
   // Retry with explicit system instruction
@@ -172,8 +172,8 @@ export async function translateViolations(
     if (validateTranslation(retryParsed)) {
       return retryParsed.issues;
     }
-  } catch {
-    // fall through to fallback
+  } catch (error) {
+    console.error('LLM translation attempt 2 failed:', error instanceof Error ? error.message : error);
   }
 
   return buildFallback(violations);

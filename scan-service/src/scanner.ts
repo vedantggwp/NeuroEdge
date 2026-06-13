@@ -163,12 +163,17 @@ async function scanUrlInternal(url: string): Promise<ScanResult> {
 const SCAN_TIMEOUT_MS = 45_000;
 
 export async function scanUrl(url: string): Promise<ScanResult> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
   const timeout = new Promise<never>((_, reject) => {
-    setTimeout(
+    timer = setTimeout(
       () => reject(new Error(`Scan timed out after ${SCAN_TIMEOUT_MS / 1000}s`)),
       SCAN_TIMEOUT_MS,
     );
   });
 
-  return Promise.race([scanUrlInternal(url), timeout]);
+  try {
+    return await Promise.race([scanUrlInternal(url), timeout]);
+  } finally {
+    if (timer) clearTimeout(timer);
+  }
 }

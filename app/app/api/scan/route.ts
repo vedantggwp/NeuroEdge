@@ -76,18 +76,28 @@ export async function POST(req: Request) {
     return NextResponse.json(err, { status: scanResponse.status });
   }
 
-  const result = await scanResponse.json();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let result: any;
+  try {
+    result = await scanResponse.json();
+  } catch {
+    return NextResponse.json(
+      { error: "Scan service returned an invalid response" },
+      { status: 502 },
+    );
+  }
 
   /* Persist to Supabase */
   const db = createServerClient();
+  const violations = Array.isArray(result.violations) ? result.violations : [];
   const { data: scan, error: insertError } = await db
     .from("scans")
     .insert({
       url,
       score: result.score,
       total_violations: result.totalViolations,
-      violations: result.violations,
-      top_issues: result.violations?.slice(0, 5) ?? [],
+      violations,
+      top_issues: violations.slice(0, 5),
       passed_rules: result.passedRules ?? 0,
       total_rules: result.totalRules ?? 0,
     })
@@ -106,6 +116,6 @@ export async function POST(req: Request) {
     id: scan.id,
     score: result.score,
     totalViolations: result.totalViolations,
-    violations: result.violations,
+    violations,
   });
 }
