@@ -68,7 +68,8 @@ Copy each package's env template and fill in keys (Supabase; optionally Gemini/R
 
 ## Repository map
 
-See [`MANIFEST.md`](MANIFEST.md) for a file-by-file index.
+- [`MANIFEST.md`](MANIFEST.md) — file-by-file index of the codebase.
+- [`CHANGELOG.md`](CHANGELOG.md) — project history (initial build → security hardening → going live → free OSS demo).
 
 ## License
 
