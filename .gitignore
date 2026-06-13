@@ -48,6 +48,12 @@ scan-service/dist/
 mcp-server/node_modules/
 mcp-server/dist/
 
+# Allow shared utilities package
+!shared/
+!shared/**
+shared/node_modules/
+shared/dist/
+
 # Allow Supabase
 !supabase/
 !supabase/**

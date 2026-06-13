@@ -3,7 +3,7 @@
  * JSON, capping output size so a violation-heavy page never floods the host
  * model's context window.
  */
-import type { ScanResult, ScanViolation } from './types.js';
+import type { ScanResult, ScanViolation } from '@neuroedge/shared';
 
 export const CHARACTER_LIMIT = 25_000;
 
