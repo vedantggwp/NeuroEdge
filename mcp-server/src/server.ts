@@ -11,7 +11,7 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
 import { scanUrl } from './scanner.js';
 import { formatScanResult, type ResponseFormat } from './format.js';
-import type { ScanResult } from './types.js';
+import type { ScanResult } from '@neuroedge/shared';
 
 const sampleNodeSchema = z.object({
   target: z.array(z.string()),

@@ -29,11 +29,11 @@ export interface ScanViolation {
 export interface ScanResult {
   /** The final URL that was scanned (post-redirect, normalised). */
   url: string;
-  /** Accessibility score 0–100. */
+  /** Accessibility score 0-100. */
   score: number;
   /** Total failing elements across all violations. */
   totalViolations: number;
-  /** Violations, sorted critical → minor. */
+  /** Violations, sorted critical -> minor. */
   violations: ScanViolation[];
   /** Count of axe-core rules that passed. */
   passedRules: number;

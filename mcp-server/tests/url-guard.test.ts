@@ -3,7 +3,7 @@ import {
   isPrivateIp,
   validateUrl,
   checkHostSafety,
-} from '../src/url-guard.js';
+} from '@neuroedge/shared';
 
 describe('isPrivateIp — IPv4', () => {
   it.each([
