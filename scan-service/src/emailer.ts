@@ -1,5 +1,14 @@
 import { Resend } from 'resend';
 
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 function getResendClient(): Resend {
   const apiKey = process.env['RESEND_API_KEY'];
   if (!apiKey) {
@@ -41,7 +50,7 @@ export async function sendReport(
     <div style="background:#fff;padding:32px;border:1px solid #E5E7EB;border-top:none;">
       <h1 style="font-size:20px;font-weight:700;color:#0D1B2A;margin:0 0 8px 0;">Your accessibility report is ready</h1>
       <p style="color:#6B7280;font-size:14px;margin:0 0 24px 0;">
-        We've completed the scan for <strong style="color:#0D1B2A;">${scanUrl}</strong>
+        We've completed the scan for <strong style="color:#0D1B2A;">${escapeHtml(scanUrl)}</strong>
       </p>
 
       <div style="background:#F8F9FA;border-radius:10px;padding:20px;text-align:center;margin-bottom:24px;">

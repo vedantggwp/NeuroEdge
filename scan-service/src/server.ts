@@ -13,7 +13,14 @@ const app = Fastify({ logger: true });
 let activeScanCount = 0;
 const MAX_CONCURRENT_SCANS = 5;
 
-await app.register(cors, { origin: true });
+const ALLOWED_ORIGINS = (process.env['ALLOWED_ORIGINS'] ?? '')
+  .split(',')
+  .map((o) => o.trim())
+  .filter(Boolean);
+
+await app.register(cors, {
+  origin: ALLOWED_ORIGINS.length > 0 ? ALLOWED_ORIGINS : false,
+});
 await app.register(rateLimit, {
   max: 10,
   timeWindow: '1 minute',
@@ -148,6 +155,13 @@ app.post('/api/generate-report', async (request, reply) => {
 });
 
 app.get('/health', async () => ({ status: 'ok' }));
+
+app.addHook('onSend', async (_request, reply, payload) => {
+  reply.header('X-Content-Type-Options', 'nosniff');
+  reply.header('X-Frame-Options', 'DENY');
+  reply.header('Cache-Control', 'no-store');
+  return payload;
+});
 
 const PORT = parseInt(process.env['PORT'] ?? '3001', 10);
 app.listen({ port: PORT, host: '0.0.0.0' }, (err) => {
