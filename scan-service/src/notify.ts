@@ -12,5 +12,7 @@ export async function notifyFailure(reportId: string, error: string): Promise<vo
     to: ALERT_EMAIL,
     subject: `Report ${reportId.slice(0, 8)} failed`,
     text: `Report ID: ${reportId}\nError: ${error}\nTime: ${new Date().toISOString()}`,
-  }).catch(() => {}); // best-effort, never throw
+  }).catch((err: unknown) => {
+    console.error('Failed to send failure alert:', err instanceof Error ? err.message : err);
+  });
 }

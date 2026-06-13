@@ -102,8 +102,8 @@ export async function detectCMS(page: Page): Promise<string> {
     try {
       const matched = await signal.check(page);
       if (matched) return signal.name;
-    } catch {
-      // If a check fails (e.g. page navigated away), skip it
+    } catch (err) {
+      console.warn(`CMS check "${signal.name}" failed:`, err instanceof Error ? err.message : err);
       continue;
     }
   }
