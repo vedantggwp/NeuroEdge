@@ -16,7 +16,7 @@ jobs:
       - name: Install dependencies
         env:
           PUPPETEER_SKIP_DOWNLOAD: "true"
-        run: cd shared && npm install
+        run: cd shared && npm ci
       - name: Typecheck
         run: cd shared && npm run typecheck
       - name: Build
@@ -31,12 +31,14 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
+          cache: "npm"
+          cache-dependency-path: mcp-server/package-lock.json
       - name: Build shared
         env:
           PUPPETEER_SKIP_DOWNLOAD: "true"
-        run: cd shared && npm install && npm run build
+        run: cd shared && npm ci && npm run build
       - name: Install dependencies
-        run: cd mcp-server && npm install
+        run: cd mcp-server && npm ci
       - name: Typecheck
         run: cd mcp-server && npm run typecheck
       - name: Test
@@ -53,14 +55,16 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
+          cache: "npm"
+          cache-dependency-path: scan-service/package-lock.json
       - name: Build shared
         env:
           PUPPETEER_SKIP_DOWNLOAD: "true"
-        run: cd shared && npm install && npm run build
+        run: cd shared && npm ci && npm run build
       - name: Install dependencies
         env:
           PUPPETEER_SKIP_DOWNLOAD: "true"
-        run: cd scan-service && npm install
+        run: cd scan-service && npm ci
       - name: Typecheck
         run: cd scan-service && npx tsc --noEmit
       - name: Test
