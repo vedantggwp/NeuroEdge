@@ -12,20 +12,25 @@
 - `docs/` - Plans, playbooks, audit reports.
 - `brand/`, `concepts/`, `PitchDeck/` - Pitch and brand assets.
 - `video/` - Pitch video Remotion project.
+- `shared/` - Internal `@neuroedge/shared` package: shared utilities used by both `scan-service` and `mcp-server` (accessibility score, CMS detector, SSRF guard, scan-result types).
 - `DESIGN-BRIEF.md` - Product design brief.
+
+### shared (`@neuroedge/shared`)
+- `shared/src/score.ts` - Accessibility score formula. Pass-ratio 60% + deduction penalty 40% using hyperbolic curve `d / (d + k*R)`.
+- `shared/src/cms-detector.ts` - Heuristic CMS fingerprinting (WordPress, Shopify, Wix, etc.). Uses a minimal `CmsDetectorPage` interface to avoid a hard puppeteer dependency.
+- `shared/src/ssrf.ts` - SSRF guard. Blocks private/reserved IPv4 AND IPv6 (loopback, ULA, link-local, CGNAT, metadata, IPv4-mapped); resolves A+AAAA; `validateUrl`, `checkHostSafety`, `assertSafeUrl`.
+- `shared/src/types.ts` - `ScanSampleNode`, `ScanViolation`, `ScanResult` interfaces.
+- `shared/src/index.ts` - Barrel re-export of all shared modules.
 
 ### scan-service
 - `scan-service/src/server.ts` - Fastify app. Routes: `POST /api/scan`, `POST /api/generate-report`, `GET /health`. Optional `x-api-key` header gate.
 - `scan-service/src/scanner.ts` - Puppeteer + axe-core runner. Returns score, violations (with sampleNodes), CMS, screenshots. Delegates per-request SSRF interception to `request-guard.ts`.
 - `scan-service/src/request-guard.ts` - SSRF guard for Puppeteer requests: validates every http(s) request (nav, redirect, AND sub-resource) via DNS-resolving `checkHostSafety`; fails CLOSED; per-scan host cache. Extracted from scanner.ts 2026-06-11.
 - `scan-service/src/industry-detector.ts` - Schema.org + keyword-based industry classification. Word-boundary regex matching (fixed 2026-04-19).
-- `scan-service/src/score.ts` - Accessibility score formula. Pass-ratio 60% + deduction penalty 40% using hyperbolic curve `d / (d + k*R)` (fixed 2026-04-19).
 - `scan-service/src/translator.ts` - LLM plain-English + business-impact translation. Local source is Anthropic-only; VPS runs a multi-provider patched version.
-- `scan-service/src/cms-detector.ts` - Heuristic CMS fingerprinting (WordPress, Shopify, Wix, etc.).
 - `scan-service/src/screenshot.ts` - Full-page + annotated screenshot capture with issue bounding boxes.
 - `scan-service/src/emailer.ts` - Resend integration for report delivery.
 - `scan-service/src/notify.ts` - Failure alert emails to ved@neuroedge.co.uk.
-- `scan-service/src/url-validator.ts` - Pre-scan URL + DNS validation.
 - `scan-service/src/db.ts` - Supabase client (service role).
 - `scan-service/src/pdf/` - PDF report generator.
 - `scan-service/Caddyfile` - `scan.neuroedge.co.uk -> localhost:3001` (local reference; VPS uses `/etc/caddy/Caddyfile` with `:80`).
@@ -36,11 +41,7 @@
 - `mcp-server/src/index.ts` - Entry point; runs `McpServer` over stdio. Graceful Chromium shutdown on SIGINT/SIGTERM.
 - `mcp-server/src/server.ts` - `buildServer()`; registers the `neuroedge_scan_website` tool (Zod in/out schemas, read-only). Scanner is injectable for tests. Returns structured findings for the host AI to translate (BYO-AI).
 - `mcp-server/src/scanner.ts` - Puppeteer + axe-core runner. Lazy-loads Chromium; re-validates every redirect against the SSRF guard.
-- `mcp-server/src/url-guard.ts` - SSRF guard. Blocks private/reserved IPv4 AND IPv6 (loopback, ULA, link-local, CGNAT, metadata, IPv4-mapped); resolves A+AAAA; re-checked per redirect.
-- `mcp-server/src/score.ts` - Accessibility score (shared formula with scan-service).
-- `mcp-server/src/cms-detector.ts` - Heuristic CMS fingerprinting (shared logic with scan-service).
 - `mcp-server/src/format.ts` - Markdown/JSON rendering with a CHARACTER_LIMIT cap.
-- `mcp-server/src/types.ts` - ScanResult / ScanViolation interfaces.
 - `mcp-server/tests/` - Vitest: url-guard (IPv4/IPv6 SSRF), score, full MCP round-trip via InMemoryTransport. 37 tests.
 - `mcp-server/README.md` - OSS docs: BYO-AI rationale, Claude Desktop config, tool reference, security.
 

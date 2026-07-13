@@ -16,6 +16,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@neuroedge/shared": "file:../shared",
     "@anthropic-ai/sdk": "^0.80.0",
     "@axe-core/puppeteer": "^4.11.1",
     "@fastify/cors": "^11.2.0",

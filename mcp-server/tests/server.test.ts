@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
 import { buildServer } from '../src/server.js';
-import type { ScanResult } from '../src/types.js';
+import type { ScanResult } from '@neuroedge/shared';
 
 const FAKE_RESULT: ScanResult = {
   url: 'https://example.com/',

@@ -1,3 +1,8 @@
+/**
+ * Accessibility score: pass-ratio (60%) + a deduction penalty (40%) using a
+ * hyperbolic curve d/(d + 2R) that stays strictly < 1 and never saturates at
+ * high deduction counts.
+ */
 const IMPACT_WEIGHTS: Record<string, number> = {
   critical: 10,
   serious: 5,
@@ -24,7 +29,6 @@ export function calculateScore(input: ScoringInput): number {
   if (totalRules === 0) return 100;
 
   const passRatio = passes.length / totalRules;
-  // Hyperbolic curve d/(d+2R) stays strictly <1 and monotonic at high deductions (old Math.min cap saturated).
   const deductionPenalty = totalDeductions / (totalDeductions + totalRules * 2);
   const raw = (passRatio * 0.6 + (1 - deductionPenalty) * 0.4) * 100;
 

@@ -1,35 +1,35 @@
 import { describe, it, expect } from 'vitest';
-import { validateUrl, isPrivateIp, checkHostSafety } from '../src/url-validator.js';
+import { validateUrl, isPrivateIp, checkHostSafety } from '@neuroedge/shared';
 
-// ─── Existing tests (preserved exactly) ─────────────────────────────────────
+// --- validateUrl ---
 
 describe('validateUrl', () => {
   it('accepts valid public HTTP URLs', () => {
-    expect(validateUrl('https://example.com')).toEqual({ valid: true, url: 'https://example.com/' });
-    expect(validateUrl('http://example.com')).toEqual({ valid: true, url: 'http://example.com/' });
+    expect(validateUrl('https://example.com')).toEqual({ safe: true, url: 'https://example.com/' });
+    expect(validateUrl('http://example.com')).toEqual({ safe: true, url: 'http://example.com/' });
   });
 
   it('rejects private/reserved IPs', () => {
-    expect(validateUrl('http://localhost')).toEqual({ valid: false, reason: 'Private or reserved address' });
-    expect(validateUrl('http://127.0.0.1')).toEqual({ valid: false, reason: 'Private or reserved address' });
-    expect(validateUrl('http://10.0.0.1')).toEqual({ valid: false, reason: 'Private or reserved address' });
-    expect(validateUrl('http://192.168.1.1')).toEqual({ valid: false, reason: 'Private or reserved address' });
-    expect(validateUrl('http://172.16.0.1')).toEqual({ valid: false, reason: 'Private or reserved address' });
-    expect(validateUrl('http://169.254.169.254')).toEqual({ valid: false, reason: 'Private or reserved address' });
+    expect(validateUrl('http://localhost')).toEqual({ safe: false, reason: 'Private or reserved address' });
+    expect(validateUrl('http://127.0.0.1')).toEqual({ safe: false, reason: 'Private or reserved address' });
+    expect(validateUrl('http://10.0.0.1')).toEqual({ safe: false, reason: 'Private or reserved address' });
+    expect(validateUrl('http://192.168.1.1')).toEqual({ safe: false, reason: 'Private or reserved address' });
+    expect(validateUrl('http://172.16.0.1')).toEqual({ safe: false, reason: 'Private or reserved address' });
+    expect(validateUrl('http://169.254.169.254')).toEqual({ safe: false, reason: 'Private or reserved address' });
   });
 
   it('rejects non-HTTP protocols', () => {
-    expect(validateUrl('file:///etc/passwd')).toEqual({ valid: false, reason: 'Only HTTP and HTTPS URLs are allowed' });
-    expect(validateUrl('ftp://example.com')).toEqual({ valid: false, reason: 'Only HTTP and HTTPS URLs are allowed' });
+    expect(validateUrl('file:///etc/passwd')).toEqual({ safe: false, reason: 'Only http and https URLs are allowed' });
+    expect(validateUrl('ftp://example.com')).toEqual({ safe: false, reason: 'Only http and https URLs are allowed' });
   });
 
   it('rejects empty/invalid input', () => {
-    expect(validateUrl('')).toEqual({ valid: false, reason: 'URL is required' });
-    expect(validateUrl('not-a-url')).toEqual({ valid: false, reason: 'Invalid URL format' });
+    expect(validateUrl('')).toEqual({ safe: false, reason: 'URL is required' });
+    expect(validateUrl('not-a-url')).toEqual({ safe: false, reason: 'Invalid URL format' });
   });
 });
 
-// ─── New: isPrivateIp — IPv4 (mirrored from mcp-server/tests/url-guard.test.ts) ─
+// --- isPrivateIp — IPv4 ---
 
 describe('isPrivateIp — IPv4', () => {
   it.each([
@@ -56,7 +56,7 @@ describe('isPrivateIp — IPv4', () => {
   );
 });
 
-// ─── New: isPrivateIp — IPv6 ─────────────────────────────────────────────────
+// --- isPrivateIp — IPv6 ---
 
 describe('isPrivateIp — IPv6', () => {
   it.each([
@@ -79,34 +79,34 @@ describe('isPrivateIp — IPv6', () => {
   });
 });
 
-// ─── New: validateUrl — IPv6 literal hosts ────────────────────────────────────
+// --- validateUrl — IPv6 literal hosts ---
 
 describe('validateUrl — IPv6 hosts', () => {
   it('rejects literal private/loopback IPv6 hosts', () => {
-    expect(validateUrl('http://[::1]').valid).toBe(false);
-    expect(validateUrl('http://[fc00::1]').valid).toBe(false);
-    expect(validateUrl('http://[fe80::1]').valid).toBe(false);
-    expect(validateUrl('http://[::ffff:127.0.0.1]').valid).toBe(false);
+    expect(validateUrl('http://[::1]').safe).toBe(false);
+    expect(validateUrl('http://[fc00::1]').safe).toBe(false);
+    expect(validateUrl('http://[fe80::1]').safe).toBe(false);
+    expect(validateUrl('http://[::ffff:127.0.0.1]').safe).toBe(false);
   });
 
   it('rejects *.localhost', () => {
-    expect(validateUrl('http://sub.localhost').valid).toBe(false);
+    expect(validateUrl('http://sub.localhost').safe).toBe(false);
   });
 });
 
-// ─── New: checkHostSafety — literal hosts (no DNS) ───────────────────────────
+// --- checkHostSafety — literal hosts (no DNS) ---
 
 describe('checkHostSafety — literal hosts', () => {
   it('rejects private/loopback literals and localhost', async () => {
-    expect((await checkHostSafety('127.0.0.1')).valid).toBe(false);
-    expect((await checkHostSafety('::1')).valid).toBe(false);
-    expect((await checkHostSafety('169.254.169.254')).valid).toBe(false);
-    expect((await checkHostSafety('localhost')).valid).toBe(false);
-    expect((await checkHostSafety('100.64.0.1')).valid).toBe(false);
+    expect((await checkHostSafety('127.0.0.1')).safe).toBe(false);
+    expect((await checkHostSafety('::1')).safe).toBe(false);
+    expect((await checkHostSafety('169.254.169.254')).safe).toBe(false);
+    expect((await checkHostSafety('localhost')).safe).toBe(false);
+    expect((await checkHostSafety('100.64.0.1')).safe).toBe(false);
   });
 
   it('allows public IP literals', async () => {
-    expect((await checkHostSafety('1.1.1.1')).valid).toBe(true);
-    expect((await checkHostSafety('2606:4700:4700::1111')).valid).toBe(true);
+    expect((await checkHostSafety('1.1.1.1')).safe).toBe(true);
+    expect((await checkHostSafety('2606:4700:4700::1111')).safe).toBe(true);
   });
 });

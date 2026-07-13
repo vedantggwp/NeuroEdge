@@ -1,28 +1,34 @@
 /**
  * Heuristic CMS/platform fingerprinting. Best-effort: any failing check is
- * skipped, and an undetected platform returns "unknown". Carried over from the
- * NeuroEdge engine. Knowing the platform lets the host AI give CMS-specific
- * "how to fix it yourself" guidance.
+ * skipped, and an undetected platform returns "unknown". Knowing the platform
+ * lets the host AI give CMS-specific "how to fix it yourself" guidance.
  */
-import type { Page } from 'puppeteer';
+/**
+ * Minimal subset of Puppeteer's Page used by CMS detection.
+ * Avoids a hard dependency on a specific puppeteer version/installation.
+ */
+export interface CmsDetectorPage {
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  evaluate(pageFunction: any, ...args: any[]): Promise<any>;
+}
 
-async function hasMetaGenerator(page: Page, pattern: string): Promise<boolean> {
-  return page.evaluate((p) => {
+async function hasMetaGenerator(page: CmsDetectorPage, pattern: string): Promise<boolean> {
+  return page.evaluate((p: string) => {
     const meta = document.querySelector('meta[name="generator"]');
     const content = meta?.getAttribute('content') ?? '';
     return content.toLowerCase().includes(p.toLowerCase());
   }, pattern);
 }
 
-async function hasScriptSrc(page: Page, pattern: string): Promise<boolean> {
-  return page.evaluate((p) => {
+async function hasScriptSrc(page: CmsDetectorPage, pattern: string): Promise<boolean> {
+  return page.evaluate((p: string) => {
     const scripts = Array.from(document.querySelectorAll('script[src]'));
     return scripts.some((s) => (s.getAttribute('src') ?? '').includes(p));
   }, pattern);
 }
 
-async function hasAnySrcOrHref(page: Page, pattern: string): Promise<boolean> {
-  return page.evaluate((p) => {
+async function hasAnySrcOrHref(page: CmsDetectorPage, pattern: string): Promise<boolean> {
+  return page.evaluate((p: string) => {
     const elements = Array.from(document.querySelectorAll('[src], [href]'));
     return elements.some((el) => {
       const src = el.getAttribute('src') ?? '';
@@ -32,8 +38,8 @@ async function hasAnySrcOrHref(page: Page, pattern: string): Promise<boolean> {
   }, pattern);
 }
 
-async function hasMetaNamePrefix(page: Page, prefix: string): Promise<boolean> {
-  return page.evaluate((p) => {
+async function hasMetaNamePrefix(page: CmsDetectorPage, prefix: string): Promise<boolean> {
+  return page.evaluate((p: string) => {
     const metas = Array.from(document.querySelectorAll('meta[name]'));
     return metas.some((m) => (m.getAttribute('name') ?? '').startsWith(p));
   }, prefix);
@@ -41,7 +47,7 @@ async function hasMetaNamePrefix(page: Page, prefix: string): Promise<boolean> {
 
 interface CmsSignal {
   readonly name: string;
-  readonly check: (page: Page) => Promise<boolean>;
+  readonly check: (page: CmsDetectorPage) => Promise<boolean>;
 }
 
 const CMS_SIGNALS: readonly CmsSignal[] = [
@@ -78,12 +84,12 @@ const CMS_SIGNALS: readonly CmsSignal[] = [
   },
 ];
 
-export async function detectCMS(page: Page): Promise<string> {
+export async function detectCMS(page: CmsDetectorPage): Promise<string> {
   for (const signal of CMS_SIGNALS) {
     try {
       if (await signal.check(page)) return signal.name;
     } catch {
-      continue; // page may have navigated; skip this signal
+      continue;
     }
   }
   return 'unknown';
