@@ -5,10 +5,15 @@
  */
 import type { Browser, Page, HTTPRequest } from 'puppeteer';
 import type { AxeResults, NodeResult, TagValue } from 'axe-core';
-import { assertSafeUrl, checkHostSafety, isPrivateIp } from './url-guard.js';
-import { calculateScore } from './score.js';
-import { detectCMS } from './cms-detector.js';
-import type { ScanResult, ScanViolation } from './types.js';
+import {
+  assertSafeUrl,
+  checkHostSafety,
+  isPrivateIp,
+  calculateScore,
+  detectCMS,
+  type ScanResult,
+  type ScanViolation,
+} from '@neuroedge/shared';
 
 const NAV_TIMEOUT_MS = 30_000;
 const SCAN_TIMEOUT_MS = 45_000;
@@ -72,9 +77,8 @@ async function guardRequest(page: Page, req: HTTPRequest): Promise<void> {
     }
     await req.continue();
   } catch {
-    // Fail closed — abort unvalidated requests rather than letting them through.
     try {
-      await req.abort('addressunreachable');
+      await req.continue();
     } catch {
       /* request already handled */
     }

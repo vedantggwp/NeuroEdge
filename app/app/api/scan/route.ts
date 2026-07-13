@@ -6,6 +6,10 @@ import { checkRateLimit } from "@/lib/rate-limit";
 const SCAN_SERVICE_URL = process.env.SCAN_SERVICE_URL ?? "";
 const SCAN_TIMEOUT_MS = 60_000;
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
+
 export async function POST(req: Request) {
   const clientIp = getClientIp(req);
   const rateCheck = checkRateLimit(clientIp, 5, 60_000);
@@ -76,11 +80,21 @@ export async function POST(req: Request) {
     return NextResponse.json(err, { status: scanResponse.status });
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let result: any;
+  let result: unknown;
   try {
     result = await scanResponse.json();
   } catch {
+    return NextResponse.json(
+      { error: "Scan service returned an invalid response" },
+      { status: 502 },
+    );
+  }
+
+  if (
+    !isRecord(result) ||
+    typeof result.score !== "number" ||
+    typeof result.totalViolations !== "number"
+  ) {
     return NextResponse.json(
       { error: "Scan service returned an invalid response" },
       { status: 502 },

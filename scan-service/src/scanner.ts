@@ -1,36 +1,19 @@
 import puppeteer, { type Browser } from 'puppeteer';
 import { AxePuppeteer } from '@axe-core/puppeteer';
 import type { AxeResults, NodeResult, TagValue } from 'axe-core';
-import { validateUrlWithDns } from './url-validator.js';
+import {
+  assertSafeUrl,
+  calculateScore,
+  detectCMS,
+  type ScanViolation,
+  type ScanResult as BaseScanResult,
+} from '@neuroedge/shared';
 import { guardRequest } from './request-guard.js';
-import { calculateScore } from './score.js';
-import { detectCMS } from './cms-detector.js';
 import { captureAnnotatedScreenshot } from './screenshot.js';
 
-export interface ScanSampleNode {
-  target: string[];
-  html: string;
-  failureSummary: string;
-}
+export type { ScanViolation } from '@neuroedge/shared';
 
-export interface ScanViolation {
-  id: string;
-  impact: string;
-  description: string;
-  helpUrl: string;
-  nodeCount: number;
-  wcagTags: string[];
-  sampleNodes?: ScanSampleNode[];
-}
-
-export interface ScanResult {
-  url: string;
-  score: number;
-  totalViolations: number;
-  violations: ScanViolation[];
-  passedRules: number;
-  totalRules: number;
-  cms: string;
+export interface ScanResult extends BaseScanResult {
   screenshots?: {
     fullPage: string;
     annotated: string;
@@ -60,9 +43,9 @@ const IMPACT_ORDER: Record<string, number> = {
 type AxeViolation = AxeResults['violations'][number];
 
 async function scanUrlInternal(url: string): Promise<ScanResult> {
-  const validation = await validateUrlWithDns(url);
-  if (!validation.valid) {
-    throw new Error(validation.reason);
+  const gate = await assertSafeUrl(url);
+  if (!gate.safe) {
+    throw new Error(gate.reason);
   }
 
   const b = await getBrowser();
@@ -80,7 +63,7 @@ async function scanUrlInternal(url: string): Promise<ScanResult> {
       void guardRequest(req, safeHosts);
     });
 
-    await page.goto(validation.url, { waitUntil: 'networkidle2', timeout: 30_000 });
+    await page.goto(gate.url, { waitUntil: 'networkidle2', timeout: 30_000 });
     await new Promise<void>((r) => setTimeout(r, 2000));
 
     const results: AxeResults = await new AxePuppeteer(page).analyze();
@@ -143,7 +126,7 @@ async function scanUrlInternal(url: string): Promise<ScanResult> {
     }
 
     return {
-      url: validation.url,
+      url: gate.url,
       score,
       totalViolations: violations.reduce((sum, v) => sum + v.nodeCount, 0),
       violations,

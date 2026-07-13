@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { calculateScore } from '../src/score.js';
+import { calculateScore } from '@neuroedge/shared';
 
 describe('calculateScore', () => {
   it('returns 100 for no violations', () => {
