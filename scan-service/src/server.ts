@@ -138,8 +138,15 @@ app.post('/api/generate-report', async (request, reply) => {
     const message = error instanceof Error ? error.message : 'Report generation failed';
     app.log.error({ reportId, error: message }, 'generate-report failed');
 
-    // Mark report as failed — do not swallow the DB error here
-    await db.from('reports').update({ status: 'failed', error_message: message }).eq('id', reportId);
+    // Mark report as failed
+    const { error: failError } = await db
+      .from('reports')
+      .update({ status: 'failed', error_message: message })
+      .eq('id', reportId);
+
+    if (failError) {
+      app.log.error({ reportId, dbError: failError.message }, 'failed to mark report as failed');
+    }
 
     await notifyFailure(reportId, message);
 

@@ -6,6 +6,10 @@ import { checkRateLimit } from "@/lib/rate-limit";
 const SCAN_SERVICE_URL = process.env.SCAN_SERVICE_URL ?? "";
 const SCAN_TIMEOUT_MS = 60_000;
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
+
 export async function POST(req: Request) {
   const clientIp = getClientIp(req);
   const rateCheck = checkRateLimit(clientIp, 5, 60_000);
@@ -76,18 +80,38 @@ export async function POST(req: Request) {
     return NextResponse.json(err, { status: scanResponse.status });
   }
 
-  const result = await scanResponse.json();
+  let result: unknown;
+  try {
+    result = await scanResponse.json();
+  } catch {
+    return NextResponse.json(
+      { error: "Scan service returned an invalid response" },
+      { status: 502 },
+    );
+  }
+
+  if (
+    !isRecord(result) ||
+    typeof result.score !== "number" ||
+    typeof result.totalViolations !== "number"
+  ) {
+    return NextResponse.json(
+      { error: "Scan service returned an invalid response" },
+      { status: 502 },
+    );
+  }
 
   /* Persist to Supabase */
   const db = createServerClient();
+  const violations = Array.isArray(result.violations) ? result.violations : [];
   const { data: scan, error: insertError } = await db
     .from("scans")
     .insert({
       url,
       score: result.score,
       total_violations: result.totalViolations,
-      violations: result.violations,
-      top_issues: result.violations?.slice(0, 5) ?? [],
+      violations,
+      top_issues: violations.slice(0, 5),
       passed_rules: result.passedRules ?? 0,
       total_rules: result.totalRules ?? 0,
     })
@@ -106,6 +130,6 @@ export async function POST(req: Request) {
     id: scan.id,
     score: result.score,
     totalViolations: result.totalViolations,
-    violations: result.violations,
+    violations,
   });
 }

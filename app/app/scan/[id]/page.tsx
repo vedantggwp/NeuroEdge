@@ -42,19 +42,25 @@ export default function ScanResultsPage({
   const [errorMsg, setErrorMsg] = useState("");
   const [revenueEstimate, setRevenueEstimate] = useState<RevenueEstimate | null>(null);
   const [revenueLoading, setRevenueLoading] = useState(false);
+  const [revenueError, setRevenueError] = useState<string | null>(null);
 
   const fetchScan = useCallback(async () => {
-    const res = await fetch(`/api/scans/${id}`);
+    try {
+      const res = await fetch(`/api/scans/${id}`);
 
-    if (!res.ok) {
-      setErrorMsg("Scan not found. It may still be processing or the link is invalid.");
+      if (!res.ok) {
+        setErrorMsg("Scan not found. It may still be processing or the link is invalid.");
+        setState("error");
+        return;
+      }
+
+      const data = (await res.json()) as ScanData;
+      setScan(data);
+      setState("ready");
+    } catch {
+      setErrorMsg("Could not reach the server. Please check your connection and try again.");
       setState("error");
-      return;
     }
-
-    const data = (await res.json()) as ScanData;
-    setScan(data);
-    setState("ready");
   }, [id]);
 
   useEffect(() => {
@@ -63,6 +69,7 @@ export default function ScanResultsPage({
 
   async function handleRevenueSubmit(input: RevenueFormInput) {
     setRevenueLoading(true);
+    setRevenueError(null);
     try {
       // Calculate client-side immediately for instant feedback
       const estimate = calculateRevenueUplift({
@@ -79,7 +86,9 @@ export default function ScanResultsPage({
         body: JSON.stringify({ scanId: id, ...input }),
       }).catch((err) => console.warn("Could not persist revenue estimate:", err));
     } catch (err) {
+      const message = err instanceof Error ? err.message : "Revenue calculation failed";
       console.error("Revenue calculation failed:", err);
+      setRevenueError(message);
     } finally {
       setRevenueLoading(false);
     }
@@ -173,6 +182,9 @@ export default function ScanResultsPage({
         </div>
 
         <Card padding="lg">
+          {revenueError ? (
+            <p role="alert" className="text-sm text-severity-critical">{revenueError}</p>
+          ) : null}
           {revenueEstimate ? (
             <div className="space-y-8">
               <RevenueResult estimate={revenueEstimate} />
