@@ -1,5 +1,5 @@
 import { type HTTPRequest } from 'puppeteer';
-import { checkHostSafety } from './url-validator.js';
+import { checkHostSafety } from '@neuroedge/shared';
 
 /**
  * Re-validate EVERY http(s) request Chromium makes during a scan — main-frame
@@ -30,7 +30,7 @@ export async function guardRequest(
     let safe = safeHosts.get(host);
     if (safe === undefined) {
       const verdict = await checkHostSafety(host);
-      safe = verdict.valid;
+      safe = verdict.safe;
       safeHosts.set(host, safe);
     }
 
