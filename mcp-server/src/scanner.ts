@@ -78,7 +78,7 @@ async function guardRequest(page: Page, req: HTTPRequest): Promise<void> {
     await req.continue();
   } catch {
     try {
-      await req.continue();
+      await req.abort('addressunreachable');
     } catch {
       /* request already handled */
     }
